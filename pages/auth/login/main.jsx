@@ -2,10 +2,44 @@ import React from "react";
 import Head from "next/head";
 import style from "../../../styles/auth/login.module.scss";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+  const [errMsg, setErrMsg] = React.useState("");
+
+  const handleSubmit = async () => {
+    try {
+      if (!document.getElementById("terms").checked) {
+        setIsError(true);
+        setErrMsg("Please agree to the terms and conditions to continue.");
+        return;
+      }
+
+      setIsLoading(true);
+
+      const connect = await axios.post("/api/login", {
+        email,
+        password,
+      });
+      setIsLoading(false);
+      setIsError(false)
+    } catch (error) {
+      // console.log(error?.response);
+      setIsLoading(false);
+      setIsError(true);
+      setErrMsg(
+        error?.response?.data?.messages ??
+          error?.response?.data?.message?.email?.message ??
+          error?.response?.data?.message?.password?.message ??
+          "Internal server error, please try again later"
+      );
+    }
+  };
 
   const handleForgotPassword = () => {
     router.push("/forgot-password");
@@ -29,7 +63,8 @@ const Login = () => {
             {/* left content */}
             <div className={`col-lg-6 col-12 ${style["left-side"]}`}>
               <h1 className="col-7">
-              Discover talented and skilled developers in various fields of expertise
+                Discover talented and skilled developers in various fields of
+                expertise
               </h1>
               <div className={style.logo}>
                 <img
@@ -47,6 +82,12 @@ const Login = () => {
               <div className="form-group">
                 <h2>Hello, Pewpeople</h2>
                 <p>Log in into your existing account</p>
+
+                {isError ? (
+                  <div class="alert alert-danger" role="alert">
+                    {errMsg}
+                  </div>
+                ) : null}
 
                 <label for="email">E-mail</label>
                 <input
@@ -85,9 +126,8 @@ const Login = () => {
                     className={`${style.button} btn btn-primary ${
                       isLoading ? "btn-loading" : ""
                     }`}
-                    disabled={isLoading}
-                    // onClick={login}
-                  >
+                    onClick={handleSubmit}
+                    disabled={isLoading}>
                     {isLoading ? (
                       <span
                         class="spinner-border spinner-border-sm"

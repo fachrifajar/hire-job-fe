@@ -2,19 +2,49 @@ import React from "react";
 import Head from "next/head";
 import style from "../../../styles/register/user.module.scss";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [company, setCompany] = React.useState("");
+  const [position, setPosition] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [ReEnterPassword, SetReEnterPassword] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+  const [errMsg, setErrMsg] = React.useState("");
 
   const handleLogin = () => {
     router.push("/auth/login/main");
   };
 
+  const handleRegister = async () => {
+    try {
+      if (!document.getElementById("terms").checked) {
+        setIsError(true);
+        setErrMsg("Please agree to the terms and conditions to continue.");
+        return;
+      }
+      setIsLoading(true);
+
+      const connect = await axios.post("/api/registerRecruiter", {
+        username,
+        email,
+        company,
+        position,
+        phoneNumber,
+        password,
+      });
+    } catch (error) {}
+  };
+
   return (
     <>
       <Head>
-        <title>Register User</title>
+        <title>Register Recruiter</title>
         <meta name="description" content="hire job" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.png" />
