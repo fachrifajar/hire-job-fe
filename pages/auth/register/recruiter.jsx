@@ -28,17 +28,45 @@ const Login = () => {
         setErrMsg("Please agree to the terms and conditions to continue.");
         return;
       }
+      if (!ReEnterPassword) {
+        setIsError(true);
+        setErrMsg("Re-enter password cannot be blank.");
+        return;
+      }
+      if (ReEnterPassword !== password) {
+        setIsError(true);
+        setErrMsg("Re-entered password does not match the password.");
+        return;
+      }
+
+
       setIsLoading(true);
 
       const connect = await axios.post("/api/registerRecruiter", {
-        username,
+        fullname: username,
         email,
         company,
         position,
-        phoneNumber,
+        phone_number: phoneNumber,
         password,
       });
-    } catch (error) {}
+      setIsLoading(false);
+      setIsError(false);
+      router.push("/auth/login/main")
+    } catch (error) {
+      // console.log(error?.response);
+      setIsLoading(false);
+      setIsError(true);
+      setErrMsg(
+        error?.response?.data?.messages ??
+          error?.response?.data?.message?.fullname?.message ??
+          error?.response?.data?.message?.email?.message ??
+          error?.response?.data?.message?.company?.message ??
+          error?.response?.data?.message?.position?.message ??
+          error?.response?.data?.message?.password?.message ??
+          "Internal server error, please try again later"
+      );
+    }
   };
 
   return (
@@ -74,13 +102,19 @@ const Login = () => {
                 <h2>Let's get started !</h2>
                 {/* <p>Create new account to access all features</p> */}
 
+                {isError ? (
+                  <div class="alert alert-danger" role="alert">
+                    {errMsg}
+                  </div>
+                ) : null}
+
                 <label for="text">Name</label>
                 <input
                   type="text"
                   className="mb-2 form-control"
                   id="name"
                   placeholder="Enter your Name"
-                  onChange={(event) => SetUsername(event.target.value)}
+                  onChange={(event) => setUsername(event.target.value)}
                 />
 
                 <label for="email">E-mail</label>
@@ -117,7 +151,7 @@ const Login = () => {
                   className="mb-2 form-control"
                   id="phone-number"
                   placeholder="Enter your Phone Number"
-                  onChange={(event) => Setphone_number(event.target.value)}
+                  onChange={(event) => setPhoneNumber(event.target.value)}
                 />
 
                 <label for="password">Password</label>
@@ -156,8 +190,7 @@ const Login = () => {
                       isLoading ? "btn-loading" : ""
                     }`}
                     disabled={isLoading}
-                    // onClick={login}
-                  >
+                    onClick={handleRegister}>
                     {isLoading ? (
                       <span
                         class="spinner-border spinner-border-sm"
