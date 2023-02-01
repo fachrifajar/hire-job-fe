@@ -29,7 +29,7 @@ const Login = () => {
                 expertise
               </h1>
               <div className={style.logo}>
-                <img
+                <Image
                   src="/images/logo-text.png"
                   width="100px"
                   alt="main-logo"

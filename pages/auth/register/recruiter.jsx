@@ -39,7 +39,6 @@ const Login = () => {
         return;
       }
 
-
       setIsLoading(true);
 
       const connect = await axios.post("/api/registerRecruiter", {
@@ -52,7 +51,7 @@ const Login = () => {
       });
       setIsLoading(false);
       setIsError(false);
-      router.push("/auth/login/main")
+      router.push("/auth/login/main");
     } catch (error) {
       // console.log(error?.response);
       setIsLoading(false);
@@ -87,7 +86,7 @@ const Login = () => {
                 expertise
               </h1>
               <div className={style.logo}>
-                <img
+                <Image
                   src="/images/logo-text.png"
                   width="100px"
                   alt="main-logo"
