@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import Head from "next/head";
 import style from "../../../styles/register/user.module.scss";
@@ -86,7 +87,7 @@ const Login = () => {
                 expertise
               </h1>
               <div className={style.logo}>
-                <Image
+                <img
                   src="/images/logo-text.png"
                   width="100px"
                   alt="main-logo"
