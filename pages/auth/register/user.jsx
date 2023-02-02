@@ -3,14 +3,22 @@ import React from "react";
 import Head from "next/head";
 import style from "../../../styles/register/user.module.scss";
 import { useRouter } from "next/router";
+import AuthContent from "@/components/molecules/authContent";
+import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 
-
-const Login = () => {
+const Login = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
 
+  React.useEffect(() => {
+    const validateAcc = props.profile;
+    if (validateAcc) {
+      router.replace("/");
+    }
+  }, []);
+
   const handleLogin = () => {
-    router.push("/auth/login/main");
+    router.push("/auth/login/");
   };
 
   return (
@@ -25,20 +33,7 @@ const Login = () => {
         <div className="container-fluid">
           <div className="row">
             {/* left content */}
-            <div className={`col-lg-6 col-12 ${style["left-side"]}`}>
-              <h1 className="col-7">
-                Discover talented and skilled developers in various fields of
-                expertise
-              </h1>
-              <div className={style.logo}>
-                <Image
-                  src="/images/logo-text.png"
-                  width="100px"
-                  alt="main-logo"
-                />
-              </div>
-              <div className={style["left-side-overlay"]}></div>
-            </div>
+            <AuthContent />
             {/* end of left content */}
             {/* right content */}
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
@@ -138,6 +133,18 @@ const Login = () => {
       </main>
     </>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const token = getCookie("token", context) || "";
+  const profile = getCookie("profile", context) || "";
+
+  return {
+    props: {
+      token,
+      profile,
+    },
+  };
 };
 
 export default Login;

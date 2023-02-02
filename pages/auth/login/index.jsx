@@ -4,15 +4,23 @@ import Head from "next/head";
 import style from "../../../styles/auth/login.module.scss";
 import { useRouter } from "next/router";
 import axios from "axios";
+import AuthContent from "@/components/molecules/authContent";
+import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 
-
-const Login = () => {
+const Login = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isError, setIsError] = React.useState(false);
   const [errMsg, setErrMsg] = React.useState("");
+
+  React.useEffect(() => {
+    const validateAcc = props.profile;
+    if (validateAcc) {
+      router.replace("/");
+    }
+  }, []);
 
   const handleSubmit = async () => {
     try {
@@ -28,8 +36,26 @@ const Login = () => {
         email,
         password,
       });
+      // localStorage.setItem("token", connect?.data?.token);
+      // localStorage.setItem("profile", JSON.stringify(connect?.data?.data));
+      setCookie("token", connect?.data?.token, {
+        maxAge: 60 * 6 * 24,
+      });
+      setCookie("profile", JSON.stringify(connect?.data?.data), {
+        maxAge: 60 * 6 * 24,
+      });
+
+      // lebih baik dibuat conditional rendering didalam, dibanding dibuat 2 login pages
+      // if (connect?.data?.data?.recruiter_id) {
+      //   localStorage.setItem("token", connect?.data?.token);
+      //   localStorage.setItem("profile", JSON.stringify(connect?.data?.data));
+      // } else {
+      //   setIsError("ini login untuk users");
+      // }
+
       setIsLoading(false);
       setIsError(false);
+      router.push("/jobs");
     } catch (error) {
       // console.log(error?.response);
       setIsLoading(false);
@@ -48,7 +74,7 @@ const Login = () => {
   };
 
   const handleSignUp = () => {
-    router.push("/auth/register/main");
+    router.push("/auth/register/");
   };
 
   return (
@@ -63,20 +89,9 @@ const Login = () => {
         <div className="container-fluid">
           <div className="row">
             {/* left content */}
-            <div className={`col-lg-6 col-12 ${style["left-side"]}`}>
-              <h1 className="col-7">
-                Discover talented and skilled developers in various fields of
-                expertise
-              </h1>
-              <div className={style.logo}>
-                <img
-                  src="/images/logo-text.png"
-                  width="100px"
-                  alt="main-logo"
-                />
-              </div>
-              <div className={style["left-side-overlay"]}></div>
-            </div>
+
+            <AuthContent />
+
             {/* end of left content */}
             {/* right content */}
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
@@ -86,7 +101,7 @@ const Login = () => {
                 <p>Log in into your existing account</p>
 
                 {isError ? (
-                  <div class="alert alert-danger" role="alert">
+                  <div className="alert alert-danger" role="alert">
                     {errMsg}
                   </div>
                 ) : null}
@@ -160,6 +175,18 @@ const Login = () => {
       </main>
     </>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const token = getCookie("token", context) || "";
+  const profile = getCookie("profile", context) || "";
+
+  return {
+    props: {
+      token,
+      profile,
+    },
+  };
 };
 
 export default Login;

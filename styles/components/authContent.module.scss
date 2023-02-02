@@ -1,0 +1,57 @@
+// #login-page-users {
+//   background-color: #e5e5e5;
+// }
+
+.left-side {
+  background-image: url(/images/auth-image-2.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 0;
+
+  .left-side-overlay {
+    background-color: #5e50a1;
+    height: 100vh;
+    width: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+    z-index: 1;
+
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+  }
+
+  h1 {
+    // font-family: "Open Sans";
+    margin-right: 150px;
+    text-align: left;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 70px;
+    z-index: 2;
+    color: #ffffff;
+
+    @media (max-width: 590px) {
+      // font-size: 33px;
+      padding-top: 50px;
+    }
+  }
+
+  .logo {
+    z-index: 3;
+    display: flex;
+    position: absolute;
+
+    padding: 30px 30px;
+    top: 0;
+    left: 0;
+  }
+}
