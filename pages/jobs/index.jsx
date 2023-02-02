@@ -399,47 +399,47 @@ const Jobs = (props) => {
                 <div
                   className={`container d-flex align-items-center justify-content-center ${style["pagination"]}`}>
                   <nav aria-label="Page navigation example">
-                    <ul className="pagination">
+                    <ul className={`pagination ${style["pagination-nav"]}`}>
                       <li className="page-item">
-                        <btn
+                        <button
                           className={`page-link ${
                             currentPage === 1 ? "disabled" : ""
-                          }`}
+                          } ${style["pagination-previous"]}`}
                           onClick={() => {
                             if (currentPage > 1)
                               fetchPagination(currentPage - 1);
                           }}>
                           Previous
-                        </btn>
+                        </button>
                       </li>
                       {[...new Array(totalPage)].map((item, key) => {
                         let position = ++key;
                         return (
                           <li className="page-item" key={key}>
-                            <btn
+                            <button
                               className={`page-link ${
                                 currentPage === position ? "active" : ""
-                              }`}
+                              } ${style["pagination-number"]}`}
                               onClick={() => {
                                 fetchPagination(position);
                               }}>
                               {position}
-                            </btn>
+                            </button>
                           </li>
                         );
                       })}
                       <li class="page-item">
-                        <btn
+                        <button
                           class={`page-link ${
                             currentPage === totalPage ? "disabled" : ""
-                          }`}
+                          } ${style["pagination-next"]}`}
                           onClick={() => {
                             if (currentPage < totalPage) {
                               fetchPagination(currentPage + 1);
                             }
                           }}>
                           Next
-                        </btn>
+                        </button>
                       </li>
                     </ul>
                   </nav>
