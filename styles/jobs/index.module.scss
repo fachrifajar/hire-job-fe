@@ -216,6 +216,39 @@
     }
   }
 
+  .search-content {
+    // background-color: white;
+    // padding: 10px 0px 0px 0px;
+
+    input {
+      background-color: white;
+      border: none;
+    }
+
+    button {
+      border: none;
+    }
+
+    .dropdown-search {
+      border-left: 1px solid #9ea0a5 !important;
+      color: #9ea0a5;
+      background-color: white;
+    }
+
+    .dropdown-search:hover {
+      background-color: whitesmoke;
+    }
+
+    .button-search {
+      background-color: #5e50a1;
+      color: white;
+    }
+    .button-search:hover {
+      background-color: #5e50a1c4;
+      color: white;
+    }
+  }
+
   .card-style {
     // margin-top: 30px;
     // border-bottom: 2px solid #f2f3f4;
@@ -280,6 +313,27 @@
     .content-line {
       bottom: 0;
       margin-bottom: -1px;
+    }
+  }
+  .pagination {
+    margin-top: 30px;
+
+    .page-linx {
+      background-color: white;
+      border: gray 5px bold;
+      color: #1f2a36;
+    }
+
+    .page-linx:hover {
+      background-color: #5e50a1;
+      border: #5e50a1c4;
+      color: #1f2a36;
+    }
+
+    .page-linx.active {
+      background-color: #5e50a1;
+      border: #5e50a1c4;
+      color: #1f2a36;
     }
   }
 }
