@@ -8,6 +8,7 @@ import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import { BsFillBellFill, BsEnvelope } from "react-icons/bs";
 import { GrLocation } from "react-icons/gr";
 import Navbar from "@/components/organisms/navbar";
+import Spinner from "@/components/atoms/spinner";
 
 const Jobs = (props) => {
   const router = useRouter();
@@ -25,7 +26,35 @@ const Jobs = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [disablePagination, setDisablePagination] = React.useState(false);
 
+  const fetchBySort = (pageParam, sortValue) => {
+    if (sortValue) {
+      setIsLoading(true);
+      setGetJobList([]);
+    }
+
+    axios
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&sortBy=${sortValue}`
+      )
+      .then(({ data }) => {
+        setGetJobList(data?.data?.rows);
+        setTotalPage(parseInt(Math.ceil(data?.data?.count / 1)));
+        setCurrentPage(pageParam);
+        setDisablePagination(false);
+
+        console.log("sort");
+        console.log(data?.data?.rows);
+        console.log("sort");
+      })
+      .catch((err) => {
+        setGetJobList([]);
+        setDisablePagination(true);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   const fetchPagination = (pageParam) => {
+    setIsLoading(true);
     setGetJobList([]);
     axios
       .get(
@@ -35,6 +64,7 @@ const Jobs = (props) => {
         setGetJobList(data?.data?.rows);
         setTotalPage(parseInt(Math.ceil(data?.data?.count / 1)));
         setCurrentPage(pageParam);
+        setDisablePagination(false);
         // console.log("paginate");
         // console.log(setGetJobList);
         // console.log(data?.data?.rows);
@@ -42,11 +72,14 @@ const Jobs = (props) => {
       })
       .catch((err) => {
         setGetJobList([]);
-      });
+        setDisablePagination(true);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const fetchByKeyword = () => {
     setGetJobList([]);
+    setIsLoading(true);
 
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?keyword=${keyword}`)
@@ -55,11 +88,16 @@ const Jobs = (props) => {
         //   return;
         // }
         setGetJobList(data?.data.rows);
+        setDisablePagination(false);
         // console.log("fetchbykeyword");
         // console.log(data?.data?.rows);
         // console.log("fetchbykeyword");
       })
-      .catch((err) => setGetJobList([]));
+      .catch((err) => {
+        setGetJobList([]);
+        setDisablePagination(true);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   React.useEffect(() => {
@@ -86,6 +124,7 @@ const Jobs = (props) => {
     setGetJobList(memoizedJobList);
 
     setTotalPage(parseInt(Math.ceil(memoizedJobList.length / 1)));
+    setIsLoading(false);
   }, [memoizedJobList]);
 
   // console.log("test");
@@ -208,6 +247,7 @@ const Jobs = (props) => {
           </div>
           <div className="content">
             <div className="container">
+              {/* SORT & SEARCH */}
               <div className={`${style["search-content"]} my-5`}>
                 <div className="row">
                   <div className="col-12">
@@ -231,28 +271,49 @@ const Jobs = (props) => {
                         class={`btn btn-outline-secondary dropdown-toggle ${style["dropdown-search"]}`}
                         type="button"
                         data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                        aria-expanded="false"
+                        onChange={(event) => {
+                          fetchBySort(currentPage, event.target.value);
+                        }}>
                         Category
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                          <a class="dropdown-item" href="#">
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            value="id"
+                            onClick={() => fetchBySort(currentPage, "id")}>
                             (Default)
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="#">
-                            Sort By Name
-                          </a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#">
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            value="skills"
+                            onClick={() => fetchBySort(currentPage, "skills")}>
                             Sort By Skills
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="#">
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            value="domicile"
+                            onClick={() =>
+                              fetchBySort(currentPage, "domicile")
+                            }>
                             Sort By Locations
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            value="job"
+                            onClick={() => fetchBySort(currentPage, "job")}>
+                            Sort By Job
                           </a>
                         </li>
                       </ul>
@@ -268,115 +329,122 @@ const Jobs = (props) => {
               </div>
 
               {/* CARD CONTENT */}
-              {getJobList.length !== 0 ? (
-                <div className={`card shadow ${style["card-style"]}`}>
-                  {getJobList?.slice(0, 1).map((job, key) => (
-                    <React.Fragment key={key}>
-                      <div className="card-body">
-                        <div className="row align-items-center">
-                          <div className="col-md-1 mx-4">
-                            <img
-                              src={job["user.photo_profile"]}
-                              alt="profile"
-                              className={style["profile-image"]}
-                            />
+              {isLoading ? <Spinner /> : ""}
+              {getJobList.length === 0 && !isLoading ? (
+                <h2 className="text-center">Sorry, No Data Found</h2>
+              ) : null}
+              {/* {getJobList.length !== 0 && !isLoading ? ( */}
+              <div className={`card shadow ${style["card-style"]}`}>
+                {getJobList?.slice(0, 1).map((job, key) => (
+                  <React.Fragment key={key}>
+                    <div className="card-body">
+                      <div className="row align-items-center">
+                        <div className="col-md-1 mx-4">
+                          <img
+                            src={job["user.photo_profile"]}
+                            alt="profile"
+                            className={style["profile-image"]}
+                          />
+                        </div>
+                        <div class={`col-md-8 ${style["card-text"]}`}>
+                          <h2>{capitalize(job["user.fullname"])}</h2>
+                          <p>{capitalize(job?.job)}</p>
+
+                          <div
+                            className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
+                            <GrLocation />
+                            <p>{capitalize(job?.domicile)}</p>
                           </div>
-                          <div class={`col-md-8 ${style["card-text"]}`}>
-                            <h2>{capitalize(job["user.fullname"])}</h2>
-                            <p>{capitalize(job?.job)}</p>
 
-                            <div
-                              className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
-                              <GrLocation />
-                              <p>{capitalize(job?.domicile)}</p>
-                            </div>
+                          <div className="d-flex align-items-center gap-2">
+                            {job?.skills
+                              .map((item) => (
+                                <span
+                                  class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
+                                  key={item}>
+                                  {item}
+                                </span>
+                              ))
+                              .slice(0, 3)}
 
-                            <div className="d-flex align-items-center gap-2">
-                              {job?.skills
-                                .map((item) => (
-                                  <span
-                                    class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
-                                    key={item}>
-                                    {item}
-                                  </span>
-                                ))
-                                .slice(0, 3)}
-
-                              <span
-                                class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
-                                +
-                                {
-                                  job?.skills.slice(3, job?.skills?.length)
-                                    ?.length
-                                }
-                              </span>
-                            </div>
-                          </div>
-                          <div className="col-md-2">
-                            <button
-                              className={`btn btn-primary btn-lg ${style["button-content"]}`}
-                              type="button">
-                              See Profile
-                            </button>
+                            <span
+                              class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
+                              +
+                              {
+                                job?.skills.slice(3, job?.skills?.length)
+                                  ?.length
+                              }
+                            </span>
                           </div>
                         </div>
+                        <div className="col-md-2">
+                          <button
+                            className={`btn btn-primary btn-lg ${style["button-content"]}`}
+                            type="button">
+                            See Profile
+                          </button>
+                        </div>
                       </div>
-                      <hr className={style["content-line"]} />
-                    </React.Fragment>
-                  ))}
-                </div>
-              ) : (
+                    </div>
+                    <hr className={style["content-line"]} />
+                  </React.Fragment>
+                ))}
+              </div>
+              {/* ) : (
                 <h2 className="text-center">Sorry, No Data Found</h2>
-              )}
+              )} */}
 
               {/* PAGINATION */}
-              <div
-                className={`container d-flex align-items-center justify-content-center ${style["pagination"]}`}>
-                <nav aria-label="Page navigation example">
-                  <ul className="pagination">
-                    <li className="page-item">
-                      <btn
-                        className={`page-link ${
-                          currentPage === 1 ? "disabled" : ""
-                        }`}
-                        onClick={() => {
-                          if (currentPage > 1) fetchPagination(currentPage - 1);
-                        }}>
-                        Previous
-                      </btn>
-                    </li>
-                    {[...new Array(totalPage)].map((item, key) => {
-                      let position = ++key;
-                      return (
-                        <li className="page-item" key={key}>
-                          <btn
-                            className={`page-link ${
-                              currentPage === position ? "active" : ""
-                            }`}
-                            onClick={() => {
-                              fetchPagination(position);
-                            }}>
-                            {position}
-                          </btn>
-                        </li>
-                      );
-                    })}
-                    <li class="page-item">
-                      <btn
-                        class={`page-link ${
-                          currentPage === totalPage ? "disabled" : ""
-                        }`}
-                        onClick={() => {
-                          if (currentPage < totalPage) {
-                            fetchPagination(currentPage + 1);
-                          }
-                        }}>
-                        Next
-                      </btn>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
+              {!isLoading && !disablePagination && getJobList.length !== 0 && (
+                <div
+                  className={`container d-flex align-items-center justify-content-center ${style["pagination"]}`}>
+                  <nav aria-label="Page navigation example">
+                    <ul className="pagination">
+                      <li className="page-item">
+                        <btn
+                          className={`page-link ${
+                            currentPage === 1 ? "disabled" : ""
+                          }`}
+                          onClick={() => {
+                            if (currentPage > 1)
+                              fetchPagination(currentPage - 1);
+                          }}>
+                          Previous
+                        </btn>
+                      </li>
+                      {[...new Array(totalPage)].map((item, key) => {
+                        let position = ++key;
+                        return (
+                          <li className="page-item" key={key}>
+                            <btn
+                              className={`page-link ${
+                                currentPage === position ? "active" : ""
+                              }`}
+                              onClick={() => {
+                                fetchPagination(position);
+                              }}>
+                              {position}
+                            </btn>
+                          </li>
+                        );
+                      })}
+                      <li class="page-item">
+                        <btn
+                          class={`page-link ${
+                            currentPage === totalPage ? "disabled" : ""
+                          }`}
+                          onClick={() => {
+                            if (currentPage < totalPage) {
+                              fetchPagination(currentPage + 1);
+                            }
+                          }}>
+                          Next
+                        </btn>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              )}
             </div>
           </div>
         </section>
