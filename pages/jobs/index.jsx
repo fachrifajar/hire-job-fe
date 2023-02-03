@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import style from "../../styles/jobs/index.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import { BsFillBellFill, BsEnvelope } from "react-icons/bs";
+import { FaRegBell, FaRegEnvelope } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
@@ -166,81 +167,75 @@ const Jobs = (props) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.png" />
       </Head>
-      <main id={`${style["all-pages"]}`}>
-        <nav
-          className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary ${style["main-nav"]}`}>
-          <div className="container">
-            {/* <button
-              className="navbar-toggler"
-              data-bs-toggle="collapse"
-              data-bs-target="#nav"
-              aria-controls="nav"
-              aria-label="Expand Navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button> */}
-            <a className={`${style["navbar-brand"]} navbar-brand`} href="#">
-              <img src="/images/logo-text-2.png" alt="hire logo" />
-            </a>
-            {isAuth ? (
-              <div
-                className={`${style["navbar-right-side"]} d-flex align-items-center`}>
-                <div className={style["navbar-icons"]}>
-                  {/* <BsFillBellFill />
-                  <BsEnvelope /> */}
-                  <img
-                    src="/images/bell-icon.png"
-                    alt="default user pp"
-                    className="mx-4"
-                  />
-                  <img
-                    src="/images/mail-icon.png"
-                    alt="default user pp"
-                    className="mx-1"
-                  />
-                </div>
+      <main id={`${style["job-page"]}`}>
+        <section id={style["main-nav"]}>
+          <nav
+            className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary`}>
+            <div className="container col-8-md col-8-lg col-12">
+              {/* <button
+                className="navbar-toggler"
+                data-bs-toggle="collapse"
+                data-bs-target="#nav"
+                aria-controls="nav"
+                aria-label="Expand Navigation">
+                <span className="navbar-toggler-icon"></span>
+              </button> */}
+              <a
+                className={`${style["navbar-brand"]} navbar-brand col-12-md col-12-lg col-8`}
+                href="#">
+                <img src="/images/logo-text-2.png" alt="hire logo" />
+              </a>
+              {isAuth ? (
                 <div
-                  className={`${style["navbar-profile-picture"]} dropdown`}
-                  onClick={() => setShowDropdown(!showDropdown)}>
-                  <img src={profPict} alt="default user pp" />
-                  {showDropdown && (
-                    <ul
-                      className={`dropdown-menu-dark ${style["dropdown-menu"]}`}>
-                      <li
-                        className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                        <a href="#">Profile</a>
-                      </li>
-                      <li
-                        className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                        <Link href="/jobs" onClick={handleLogout}>
-                          Logout
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
+                  className={`${style["navbar-right-side"]} d-flex align-items-center`}>
+                  <div className={style["navbar-icons"]}>
+                    <FaRegBell className={`mx-4 ${style["react-icons-1"]}`} />
+                    <FaRegEnvelope className={` ${style["react-icons-2"]}`} />
+                  </div>
+                  <div
+                    className={`${style["navbar-profile-picture"]} dropdown`}
+                    onClick={() => setShowDropdown(!showDropdown)}>
+                    <img src={profPict} alt="default user pp" />
+                    {showDropdown && (
+                      <ul
+                        className={`dropdown-menu-dark ${style["dropdown-menu"]}`}>
+                        <li
+                          className={`${style["dropdown-item"]} d-flex align-items-center`}>
+                          <a href="#">Profile</a>
+                        </li>
+                        <li
+                          className={`${style["dropdown-item"]} d-flex align-items-center`}>
+                          <Link href="/jobs" onClick={handleLogout}>
+                            Logout
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className={style["btn-group"]}>
-                <div id={style["signup-button"]}>
-                  <button
-                    type="button"
-                    className="btn btn-outline-light"
-                    onClick={handleSignup}>
-                    Sign Up
-                  </button>
+              ) : (
+                <div className={style["btn-group"]}>
+                  <div id={style["signup-button"]}>
+                    <button
+                      type="button"
+                      className="btn btn-outline-light"
+                      onClick={handleSignup}>
+                      Sign Up
+                    </button>
+                  </div>
+                  <div id={style["login-button"]} className="mx-3">
+                    <button
+                      type="button"
+                      className="btn btn-outline-light"
+                      onClick={handleLogin}>
+                      Log In
+                    </button>
+                  </div>
                 </div>
-                <div id={style["login-button"]} className="mx-3">
-                  <button
-                    type="button"
-                    className="btn btn-outline-light"
-                    onClick={handleLogin}>
-                    Log In
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </nav>
+              )}
+            </div>
+          </nav>
+        </section>
 
         <section id={style["jobs-content"]}>
           <div className={style["block-color"]}>

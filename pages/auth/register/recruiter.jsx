@@ -95,7 +95,8 @@ const Login = (props) => {
             {/* right content */}
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
               <div className="form-group">
-                <h2>Let&apos;s get started !</h2>
+                <h2>Hello, Recruiter !</h2>
+                <p>Create new account to access all features</p>
                 {/* <p>Create new account to access all features</p> */}
 
                 {isError ? (
@@ -107,7 +108,7 @@ const Login = (props) => {
                 <label for="text">Name</label>
                 <input
                   type="text"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="name"
                   placeholder="Enter your Name"
                   onChange={(event) => setUsername(event.target.value)}
@@ -116,35 +117,35 @@ const Login = (props) => {
                 <label for="email">E-mail</label>
                 <input
                   type="email"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="email"
                   aria-describedby="emailHelp"
-                  placeholder="Enter email"
+                  placeholder="Enter your Email"
                   onChange={(event) => setEmail(event.target.value)}
                 />
 
                 <label for="text">Company</label>
                 <input
                   type="text"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="company"
-                  placeholder="Enter your Name"
+                  placeholder="Enter your Company"
                   onChange={(event) => setCompany(event.target.value)}
                 />
 
                 <label for="text">Position</label>
                 <input
                   type="text"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="position"
-                  placeholder="Enter your Name"
+                  placeholder="Enter your Position"
                   onChange={(event) => setPosition(event.target.value)}
                 />
 
                 <label for="phone-number">Phone Number</label>
                 <input
                   type="number"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="phone-number"
                   placeholder="Enter your Phone Number"
                   onChange={(event) => setPhoneNumber(event.target.value)}
@@ -153,10 +154,10 @@ const Login = (props) => {
                 <label for="password">Password</label>
                 <input
                   type="password"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="password"
                   autocomplete="current-password"
-                  placeholder="Enter password"
+                  placeholder="Enter Password"
                   onChange={(event) => setPassword(event.target.value)}
                 />
 
@@ -165,7 +166,7 @@ const Login = (props) => {
                   type="password"
                   className="mb-4 form-control"
                   id="re-enter-password"
-                  placeholder="Re-Enter password"
+                  placeholder="Re-Enter Password"
                   onChange={(event) => SetReEnterPassword(event.target.value)}
                 />
 

@@ -38,13 +38,13 @@ const Login = (props) => {
             {/* right content */}
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
               <div className="form-group">
-                <h2>Let&apos;s get started !</h2>
+                <h2>Hello, Developer !</h2>
                 <p>Create new account to access all features</p>
 
                 <label for="text">Name</label>
                 <input
                   type="text"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="name"
                   placeholder="Enter your Name"
                   onChange={(event) => SetUsername(event.target.value)}
@@ -53,7 +53,7 @@ const Login = (props) => {
                 <label for="email">E-mail</label>
                 <input
                   type="email"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="email"
                   aria-describedby="emailHelp"
                   placeholder="Enter email"
@@ -63,7 +63,7 @@ const Login = (props) => {
                 <label for="phone-number">Phone Number</label>
                 <input
                   type="number"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="phone-number"
                   placeholder="Enter your Phone Number"
                   onChange={(event) => Setphone_number(event.target.value)}
@@ -72,10 +72,10 @@ const Login = (props) => {
                 <label for="password">Password</label>
                 <input
                   type="password"
-                  className="mb-2 form-control"
+                  className="mb-3 form-control"
                   id="password"
                   autocomplete="current-password"
-                  placeholder="Enter password"
+                  placeholder="Enter Password"
                   onChange={(event) => setPassword(event.target.value)}
                 />
 
@@ -84,7 +84,7 @@ const Login = (props) => {
                   type="password"
                   className="mb-4 form-control"
                   id="re-enter-password"
-                  placeholder="Re-Enter password"
+                  placeholder="Re-Enter Password"
                   onChange={(event) => SetReEnterPassword(event.target.value)}
                 />
 

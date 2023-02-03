@@ -1,33 +1,50 @@
-.main-nav {
-  background-color: #ffffff;
+#job-page {
+  background-color: #e5e5e5;
 }
 
-#all-pages {
-  height: 200vh;
-  background-color: #e5e5e5;
+.navbar-icons {
+  color: #9b9b9b;
+  font-size: 30px;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+
+  .react-icons-2 {
+    margin-right: -10px;
+  }
+
+  .react-icons-1:hover,
+  .react-icons-2:hover {
+    color: #5e50a1;
+  }
+}
+
+#main-nav {
+  height: 70px;
+  background-color: white;
 
   .navbar-brand img {
     height: 15%;
     width: 15%;
-  }
 
-  .navbar-icons {
-    display: flex;
-    align-items: center;
-    // margin-right: 1rem;
-  }
-
-  .navbar-icons img {
-    height: 25px;
-    width: 25px;
+    @media (max-width: 1399px) {
+      height: 20%;
+      width: 20%;
+    }
   }
 
   .navbar-profile-picture img {
     border-radius: 50%;
     width: 60px;
     height: 60px;
+    // width: 15%;
+    // height: 15%;
     object-fit: cover;
     // padding-left: 10px;
+  }
+
+  .navbar-profile-picture img:hover {
+    opacity: 0.9;
   }
 
   .btn-group {
@@ -69,11 +86,6 @@
     background-color: #5e50a1;
     color: #ffffff;
     border-color: #5e50a1;
-  }
-
-  .navbar-icons img:hover {
-    cursor: pointer;
-    // color: #5e50a1;
   }
 
   .navbar-profile-picture {
@@ -126,7 +138,7 @@
 #jobs-content {
   .block-color {
     background-color: #5e50a1;
-    height: 100px;
+    height: 70px;
 
     h2 {
       color: #fff;

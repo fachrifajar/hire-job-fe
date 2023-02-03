@@ -64,6 +64,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: auto;
+
+    @media (max-width: 992px) {
+      overflow: visible;
+    }
 
     h2 {
       font-style: normal;
@@ -73,6 +78,10 @@
       display: flex;
       text-transform: capitalize;
       color: #2e266f;
+
+      @media (max-width: 992px) {
+        padding-top: 50px;
+      }
     }
 
     p {
