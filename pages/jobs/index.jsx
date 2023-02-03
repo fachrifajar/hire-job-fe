@@ -26,7 +26,7 @@ const Jobs = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [disablePagination, setDisablePagination] = React.useState(false);
 
-  const fetchBySort = (pageParam, sortValue) => {
+  const fetchBySort = (pageParam, sortValue, orderValue) => {
     if (sortValue) {
       setIsLoading(true);
       setGetJobList([]);
@@ -34,7 +34,7 @@ const Jobs = (props) => {
 
     axios
       .get(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&sortBy=${sortValue}`
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&sortBy=${sortValue}&order=${orderValue}`
       )
       .then(({ data }) => {
         setGetJobList(data?.data?.rows);
@@ -42,9 +42,9 @@ const Jobs = (props) => {
         setCurrentPage(pageParam);
         setDisablePagination(false);
 
-        console.log("sort");
-        console.log(data?.data?.rows);
-        console.log("sort");
+        // console.log("sort");
+        // console.log(data?.data?.rows);
+        // console.log("sort");
       })
       .catch((err) => {
         setGetJobList([]);
@@ -283,7 +283,9 @@ const Jobs = (props) => {
                             class="dropdown-item"
                             href="#"
                             value="id"
-                            onClick={() => fetchBySort(currentPage, "id")}>
+                            onClick={() =>
+                              fetchBySort(currentPage, "id", "DESC")
+                            }>
                             (Default)
                           </a>
                         </li>
@@ -292,7 +294,21 @@ const Jobs = (props) => {
                             class="dropdown-item"
                             href="#"
                             value="skills"
-                            onClick={() => fetchBySort(currentPage, "skills")}>
+                            onClick={() =>
+                              fetchBySort(currentPage, "id", "ASC")
+                            }>
+                            Sort By Id (DESC)
+                          </a>
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            value="skills"
+                            onClick={() =>
+                              fetchBySort(currentPage, "skills", "DESC")
+                            }>
                             Sort By Skills
                           </a>
                         </li>
@@ -302,7 +318,7 @@ const Jobs = (props) => {
                             href="#"
                             value="domicile"
                             onClick={() =>
-                              fetchBySort(currentPage, "domicile")
+                              fetchBySort(currentPage, "domicile", "DESC")
                             }>
                             Sort By Locations
                           </a>
@@ -312,7 +328,9 @@ const Jobs = (props) => {
                             class="dropdown-item"
                             href="#"
                             value="job"
-                            onClick={() => fetchBySort(currentPage, "job")}>
+                            onClick={() =>
+                              fetchBySort(currentPage, "job", "DESC")
+                            }>
                             Sort By Job
                           </a>
                         </li>
