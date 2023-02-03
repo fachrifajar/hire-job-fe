@@ -44,18 +44,17 @@ const Navbar = (props) => {
   };
   return (
     <>
-      <section id={`${style["all-pages"]}`}>
         <nav
-          className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary ${style["section-nav"]}`}>
+          className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary ${style["main-nav"]}`}>
           <div className="container">
-            <button
+            {/* <button
               className="navbar-toggler"
               data-bs-toggle="collapse"
               data-bs-target="#nav"
               aria-controls="nav"
               aria-label="Expand Navigation">
               <span className="navbar-toggler-icon"></span>
-            </button>
+            </button> */}
             <a className={`${style["navbar-brand"]} navbar-brand`} href="#">
               <img src="/images/logo-text-2.png" alt="hire logo" />
             </a>
@@ -64,7 +63,7 @@ const Navbar = (props) => {
                 className={`${style["navbar-right-side"]} d-flex align-items-center`}>
                 <div className={style["navbar-icons"]}>
                   {/* <BsFillBellFill />
-            <BsEnvelope /> */}
+                  <BsEnvelope /> */}
                   <img
                     src="/images/bell-icon.png"
                     alt="default user pp"
@@ -119,14 +118,17 @@ const Navbar = (props) => {
             )}
           </div>
         </nav>
-      </section>
     </>
   );
 };
 
 export const getServerSideProps = async (context) => {
-  const connect = await axios.get(`http://localhost:3000/api/dummyJobs`); //sementara pakai API dummy
+  const connect = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=1`
+  );
+
   const convertData = connect.data;
+  // console.log(convertData);
 
   const token = getCookie("token", context) || "";
   const profile = getCookie("profile", context) || "";

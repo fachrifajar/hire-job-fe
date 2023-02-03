@@ -169,14 +169,14 @@ const Jobs = (props) => {
         <nav
           className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary ${style["main-nav"]}`}>
           <div className="container">
-            <button
+            {/* <button
               className="navbar-toggler"
               data-bs-toggle="collapse"
               data-bs-target="#nav"
               aria-controls="nav"
               aria-label="Expand Navigation">
               <span className="navbar-toggler-icon"></span>
-            </button>
+            </button> */}
             <a className={`${style["navbar-brand"]} navbar-brand`} href="#">
               <img src="/images/logo-text-2.png" alt="hire logo" />
             </a>
