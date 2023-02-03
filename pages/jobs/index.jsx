@@ -9,6 +9,7 @@ import { BsFillBellFill, BsEnvelope } from "react-icons/bs";
 import { GrLocation } from "react-icons/gr";
 import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
+import Link from "next/link";
 
 const Jobs = (props) => {
   const router = useRouter();
@@ -210,9 +211,9 @@ const Jobs = (props) => {
                       </li>
                       <li
                         className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                        <a href="/jobs" onClick={handleLogout}>
+                        <Link href="/jobs" onClick={handleLogout}>
                           Logout
-                        </a>
+                        </Link>
                       </li>
                     </ul>
                   )}
@@ -297,7 +298,7 @@ const Jobs = (props) => {
                             onClick={() =>
                               fetchBySort(currentPage, "id", "ASC")
                             }>
-                            Sort By Id (DESC)
+                            Sort By Id (ASC)
                           </a>
                         </li>
 

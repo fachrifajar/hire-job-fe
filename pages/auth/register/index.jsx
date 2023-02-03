@@ -46,7 +46,7 @@ const Login = (props) => {
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
               {/* input email */}
               <div className="button-group">
-                <h2>Let's get started !</h2>
+                <h2>Let&apos;s get started !</h2>
                 <p>So, which one are you ?</p>
                 <div className="d-grid">
                   <button

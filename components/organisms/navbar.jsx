@@ -2,6 +2,7 @@ import React from "react";
 import style from "../../styles/components/navbar.module.scss";
 import { useRouter } from "next/router";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
+import Link from "next/link";
 
 const Navbar = (props) => {
   const router = useRouter();
@@ -88,9 +89,9 @@ const Navbar = (props) => {
                       </li>
                       <li
                         className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                        <a href="/jobs" onClick={handleLogout}>
+                        <Link href="/jobs" onClick={handleLogout}>
                           Logout
-                        </a>
+                        </Link>
                       </li>
                     </ul>
                   )}

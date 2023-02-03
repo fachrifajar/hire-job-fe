@@ -38,7 +38,7 @@ const Login = (props) => {
             {/* right content */}
             <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
               <div className="form-group">
-                <h2>Let's get started !</h2>
+                <h2>Let&apos;s get started !</h2>
                 <p>Create new account to access all features</p>
 
                 <label for="text">Name</label>

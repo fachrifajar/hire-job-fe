@@ -162,7 +162,7 @@ const Login = (props) => {
                   Forgot Password?
                 </a>
                 <p className={style["no-account"]}>
-                  Don't have an account? &nbsp;
+                  Don&apos;t have an account? &nbsp;
                   <a onClick={handleSignUp}>
                     <span>Sign Up</span>
                   </a>
