@@ -8,7 +8,7 @@ const AuthContent = () => {
         Discover talented and skilled developers in various fields of expertise
       </h1>
       <div className={style.logo}>
-        <img src="/images/logo-text.png" width="100px" alt="main-logo" />
+        <img src="/images/logo-text.png" alt="main-logo" />
       </div>
       <div className={style["left-side-overlay"]}></div>
     </div>

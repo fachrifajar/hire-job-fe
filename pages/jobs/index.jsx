@@ -1,16 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
 import style from "../../styles/jobs/index.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
-import { BsFillBellFill, BsEnvelope } from "react-icons/bs";
-import { FaRegBell, FaRegEnvelope } from "react-icons/fa";
-import { GrLocation } from "react-icons/gr";
+import { FaRegBell, FaRegEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { RxCross1 } from "react-icons/rx";
 import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
 import Link from "next/link";
+import nextConfig from "@/next.config";
 
 const Jobs = (props) => {
   const router = useRouter();
@@ -27,8 +27,18 @@ const Jobs = (props) => {
   const [totalPage, setTotalPage] = React.useState(1);
   const [isLoading, setIsLoading] = React.useState(true);
   const [disablePagination, setDisablePagination] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const handleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleClick = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const fetchBySort = (pageParam, sortValue, orderValue) => {
+    const offset = (pageParam - 1) * 10 + 1;
     if (sortValue) {
       setIsLoading(true);
       setGetJobList([]);
@@ -36,17 +46,13 @@ const Jobs = (props) => {
 
     axios
       .get(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&sortBy=${sortValue}&order=${orderValue}`
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&sortBy=${sortValue}&order=${orderValue}&offset=${offset}`
       )
       .then(({ data }) => {
         setGetJobList(data?.data?.rows);
-        setTotalPage(parseInt(Math.ceil(data?.data?.count / 1)));
+        setTotalPage(parseInt(Math.ceil(data?.data?.count / 10)));
         setCurrentPage(pageParam);
         setDisablePagination(false);
-
-        // console.log("sort");
-        // console.log(data?.data?.rows);
-        // console.log("sort");
       })
       .catch((err) => {
         setGetJobList([]);
@@ -56,20 +62,24 @@ const Jobs = (props) => {
   };
 
   const fetchPagination = (pageParam) => {
+    const offset = (pageParam - 1) * 10 + 1;
     setIsLoading(true);
     setGetJobList([]);
     axios
       .get(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}`
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=${pageParam}&offset=${offset}`
       )
       .then(({ data }) => {
         setGetJobList(data?.data?.rows);
-        setTotalPage(parseInt(Math.ceil(data?.data?.count / 1)));
+        setTotalPage(parseInt(Math.ceil(data?.data?.count / 10)));
         setCurrentPage(pageParam);
         setDisablePagination(false);
         // console.log("paginate");
-        // console.log(setGetJobList);
+        // console.log(data?.data);
         // console.log(data?.data?.rows);
+        // console.log(data?.data?.rows?.length);
+        // console.log(Math.ceil(data?.data?.count / 10));
+        // console.log(pageParam);
         // console.log("paginate");
       })
       .catch((err) => {
@@ -117,32 +127,29 @@ const Jobs = (props) => {
 
   const memoizedJobList = React.useMemo(() => {
     if (props.JobList !== undefined) {
-      return props.JobList.data.rows;
+      return props.JobList.data;
     }
     return [];
   }, [props.JobList]);
 
   React.useEffect(() => {
-    setGetJobList(memoizedJobList);
+    setGetJobList(memoizedJobList.rows);
 
-    setTotalPage(parseInt(Math.ceil(memoizedJobList.length / 1)));
+    setTotalPage(parseInt(Math.ceil(memoizedJobList.count / 10)));
     setIsLoading(false);
+    // console.log("memoized");
+    // console.log(memoizedJobList.rows);
+    // console.log(parseInt(Math.ceil(memoizedJobList.count / 10)));
+    // console.log(memoizedJobList.count);
   }, [memoizedJobList]);
-
-  // console.log("test");
-  // console.log(getJobList);
-  // console.log(Array.isArray(getJobList));
-  // console.log("test2");
-
-  // const skills = getJobList
-  // console.log(skills);
 
   const profPict = getData?.photo_profile;
 
   const handleLogout = () => {
     deleteCookie("profile");
     deleteCookie("token");
-    router.push("/jobs");
+    // router.push("/jobs");
+    window.location.reload();
   };
 
   const handleLogin = () => {
@@ -162,76 +169,133 @@ const Jobs = (props) => {
   return (
     <>
       <Head>
-        <title>Top Jobs</title>
+        <title>Jobs</title>
         <meta name="description" content="hire job" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.png" />
       </Head>
       <main id={`${style["job-page"]}`}>
         <section id={style["main-nav"]}>
-          <nav
-            className={`${style["navbar"]} navbar navbar-expand-lg bg-body-tertiary`}>
-            <div className="container col-8-md col-8-lg col-12">
-              {/* <button
-                className="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#nav"
-                aria-controls="nav"
-                aria-label="Expand Navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button> */}
-              <a
-                className={`${style["navbar-brand"]} navbar-brand col-12-md col-12-lg col-8`}
-                href="#">
-                <img src="/images/logo-text-2.png" alt="hire logo" />
-              </a>
-              {isAuth ? (
-                <div
-                  className={`${style["navbar-right-side"]} d-flex align-items-center`}>
-                  <div className={style["navbar-icons"]}>
-                    <FaRegBell className={`mx-4 ${style["react-icons-1"]}`} />
-                    <FaRegEnvelope className={` ${style["react-icons-2"]}`} />
-                  </div>
-                  <div
-                    className={`${style["navbar-profile-picture"]} dropdown`}
-                    onClick={() => setShowDropdown(!showDropdown)}>
-                    <img src={profPict} alt="default user pp" />
-                    {showDropdown && (
-                      <ul
-                        className={`dropdown-menu-dark ${style["dropdown-menu"]}`}>
-                        <li
-                          className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                          <a href="#">Profile</a>
+          <nav className={style["main-nav"]}>
+            <div className={style["logo"]}>
+              <img
+                className={style["main-logo"]}
+                src="/images/logo-text-2.png"
+                alt="main logo"
+              />
+            </div>
+
+            {isAuth ? (
+              <ul>
+                <li>
+                  <FaRegBell className={`${style["react-icons-1"]}`} />
+                </li>
+                <li>
+                  <FaRegEnvelope className={`${style["react-icons-2"]}`} />
+                </li>
+                <li className={`nav-item dropdown ${style["nav-item"]}`}>
+                  <a
+                    className="nav-link dropdown-toggles"
+                    href="#"
+                    role="button"
+                    // data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img
+                      src={profPict}
+                      alt="user pp"
+                      onClick={handleDropdown}
+                    />
+                  </a>
+                  {showDropdown ? (
+                    <div className={style["dropdown-container"]}>
+                      <ul className={`dropdown-menu ${style["drop-down"]}`}>
+                        <li>
+                          <a
+                            className={`dropdown-item ${style["dropdown-item"]}`}
+                            href="#">
+                            Home
+                          </a>
                         </li>
-                        <li
-                          className={`${style["dropdown-item"]} d-flex align-items-center`}>
-                          <Link href="/jobs" onClick={handleLogout}>
+                        <li>
+                          <a
+                            className={`dropdown-item ${style["dropdown-item"]}`}
+                            href="#">
+                            Profile
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            className={`dropdown-item ${style["dropdown-item"]}`}
+                            href="#"
+                            onClick={handleLogout}>
                             Logout
-                          </Link>
+                          </a>
                         </li>
                       </ul>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </li>
+              </ul>
+            ) : (
+              <div className={style["btn-group"]}>
+                <div id={style["signup-button"]}>
+                  <button
+                    type="button"
+                    className="btn btn-outline-light"
+                    onClick={handleSignup}>
+                    Sign Up
+                  </button>
                 </div>
+                <div id={style["login-button"]} className="mx-3">
+                  <button
+                    type="button"
+                    className="btn btn-outline-light"
+                    onClick={handleLogin}>
+                    Log In
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <ul
+              className={`${style["hamburger"]} ${
+                isMenuOpen ? style["show"] : style["hide"]
+              }`}>
+              <li>Notifications</li>
+              <li>Mail</li>
+              <li>Profile</li>
+              {isAuth ? (
+                <li>
+                  <a
+                    className={`dropdown-item ${style["dropdown-item"]}`}
+                    href="#"
+                    onClick={handleLogout}>
+                    Logout
+                  </a>
+                </li>
               ) : (
-                <div className={style["btn-group"]}>
-                  <div id={style["signup-button"]}>
-                    <button
-                      type="button"
-                      className="btn btn-outline-light"
-                      onClick={handleSignup}>
-                      Sign Up
-                    </button>
-                  </div>
-                  <div id={style["login-button"]} className="mx-3">
-                    <button
-                      type="button"
-                      className="btn btn-outline-light"
-                      onClick={handleLogin}>
-                      Log In
-                    </button>
-                  </div>
-                </div>
+                <li>
+                  <a
+                    className={`dropdown-item ${style["dropdown-item"]}`}
+                    href="#"
+                    onClick={handleLogin}>
+                    Login
+                  </a>
+                </li>
+              )}
+            </ul>
+
+            <div className={style["menu-toggle"]} onClick={handleClick}>
+              {!isMenuOpen ? (
+                <>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </>
+              ) : (
+                <RxCross1 className={style["toggle-icon"]} />
               )}
             </div>
           </nav>
@@ -247,10 +311,10 @@ const Jobs = (props) => {
               <div className={`${style["search-content"]} my-5`}>
                 <div className="row">
                   <div className="col-12">
-                    <div class="input-group mb-3">
+                    <div className="input-group mb-3">
                       <input
                         type="search"
-                        class="form-control"
+                        className="form-control"
                         aria-label="Search"
                         placeholder="Search for any skills"
                         onChange={(event) => {
@@ -264,7 +328,7 @@ const Jobs = (props) => {
                         }}
                       />
                       <button
-                        class={`btn btn-outline-secondary dropdown-toggle ${style["dropdown-search"]}`}
+                        className={`btn btn-outline-secondary dropdown-toggle ${style["dropdown-search"]}`}
                         type="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
@@ -273,10 +337,10 @@ const Jobs = (props) => {
                         }}>
                         Category
                       </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
+                      <ul className="dropdown-menu dropdown-menu-end">
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             value="id"
                             onClick={() =>
@@ -287,7 +351,7 @@ const Jobs = (props) => {
                         </li>
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             value="skills"
                             onClick={() =>
@@ -299,7 +363,7 @@ const Jobs = (props) => {
 
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             value="skills"
                             onClick={() =>
@@ -310,7 +374,7 @@ const Jobs = (props) => {
                         </li>
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             value="domicile"
                             onClick={() =>
@@ -321,7 +385,7 @@ const Jobs = (props) => {
                         </li>
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             value="job"
                             onClick={() =>
@@ -332,7 +396,7 @@ const Jobs = (props) => {
                         </li>
                       </ul>
                       <button
-                        class={`btn btn-outline-secondary ${style["button-search"]}`}
+                        className={`btn btn-outline-secondary ${style["button-search"]}`}
                         type="button"
                         onClick={fetchByKeyword}>
                         Search
@@ -346,67 +410,66 @@ const Jobs = (props) => {
               {isLoading ? <Spinner /> : ""}
               {getJobList.length === 0 && !isLoading ? (
                 <h2 className="text-center">Sorry, No Data Found</h2>
-              ) : null}
-              {/* {getJobList.length !== 0 && !isLoading ? ( */}
-              <div className={`card shadow ${style["card-style"]}`}>
-                {getJobList?.slice(0, 1).map((job, key) => (
-                  <React.Fragment key={key}>
-                    <div className="card-body">
-                      <div className="row align-items-center">
-                        <div className="col-md-1 mx-4">
+              ) : (
+                <div
+                  className={`${style["card-content"]}${
+                    !isLoading && getJobList.length !== 0 ? "" : "hidden"
+                  }`}>
+                  {getJobList?.map((job, key) => (
+                    <React.Fragment key={key}>
+                      <div className={style["card-body"]}>
+                        <div className={` ${style["image-content"]}`}>
                           <img
                             src={job["user.photo_profile"]}
-                            alt="profile"
-                            className={style["profile-image"]}
+                            alt="user photo"
                           />
                         </div>
-                        <div class={`col-md-8 ${style["card-text"]}`}>
+                        <div className={style["text-content"]}>
                           <h2>{capitalize(job["user.fullname"])}</h2>
                           <p>{capitalize(job?.job)}</p>
-
                           <div
                             className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
-                            <GrLocation />
-                            <p>{capitalize(job?.domicile)}</p>
+                            <FaMapMarkerAlt
+                              className={style["react-icons-3"]}
+                            />
+                            <p className="my-1">{capitalize(job?.domicile)}</p>
                           </div>
 
-                          <div className="d-flex align-items-center gap-2">
-                            {job?.skills
-                              .map((item) => (
-                                <span
-                                  class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
-                                  key={item}>
-                                  {item}
-                                </span>
-                              ))
-                              .slice(0, 3)}
+                          {job?.skills?.length !== 0 ? (
+                            <React.Fragment>
+                              {job?.skills
+                                .map((item) => (
+                                  <span
+                                    className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
+                                    key={item}>
+                                    {item}
+                                  </span>
+                                ))
+                                .slice(0, 3)}
 
-                            <span
-                              class={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
-                              +
-                              {
-                                job?.skills.slice(3, job?.skills?.length)
-                                  ?.length
-                              }
-                            </span>
-                          </div>
+                              <span
+                                className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
+                                +
+                                {
+                                  job?.skills.slice(3, job?.skills?.length)
+                                    ?.length
+                                }
+                              </span>
+                            </React.Fragment>
+                          ) : null}
                         </div>
-                        <div className="col-md-2">
+                        <div className={style["button-content"]}>
                           <button
-                            className={`btn btn-primary btn-lg ${style["button-content"]}`}
+                            className={`btn btn-primary btn-lg`}
                             type="button">
                             See Profile
                           </button>
                         </div>
                       </div>
-                    </div>
-                    <hr className={style["content-line"]} />
-                  </React.Fragment>
-                ))}
-              </div>
-              {/* ) : (
-                <h2 className="text-center">Sorry, No Data Found</h2>
-              )} */}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
 
               {/* PAGINATION */}
               {!isLoading && !disablePagination && getJobList.length !== 0 && (
@@ -442,9 +505,9 @@ const Jobs = (props) => {
                           </li>
                         );
                       })}
-                      <li class="page-item">
+                      <li className="page-item">
                         <button
-                          class={`page-link ${
+                          className={`page-link ${
                             currentPage === totalPage ? "disabled" : ""
                           } ${style["pagination-next"]}`}
                           onClick={() => {
@@ -464,27 +527,12 @@ const Jobs = (props) => {
         </section>
       </main>
 
-      <footer
-        className={`${style["footer"]} d-flex align-items-center`}
-        style={{ backgroundColor: "#5e50a1", color: "white" }}>
-        <div className="container">
-          <div className="row">
-            <div className={`${style["logo"]} col-3`}>
-              <img src="/images/logo-text.png" alt="logo" />
-              {/* <p className={style["random-word"]}>THE BEST JOB SOCIAL MEDIA</p> */}
-              <hr className={style["white-line"]} />
-              <p className={style["copyright"]}>
-                2023 Pewworld. All Right Reserved
-              </p>
-            </div>
-            <div
-              className={`${style["contact-details"]} col-9 d-flex align-items-end`}>
-              <div className="d-flex justify-content-end">
-                <p className={`${style["contact"]} mx-4`}>Contact</p>
-                <p className={style["email"]}>Email</p>
-              </div>
-            </div>
-          </div>
+      <footer className={style.footer}>
+        <img className={style.logo} src="/images/logo-text.png" alt="logo" />
+        <hr className={style.hr} />
+        <div className={style.info}>
+          <p>Copyright © 2023 Peworld</p>
+          <p>All rights reserved</p>
         </div>
       </footer>
     </>
