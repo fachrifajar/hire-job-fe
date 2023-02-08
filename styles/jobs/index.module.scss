@@ -303,7 +303,6 @@
   }
 }
 
-
 #jobs-content {
   overflow-y: hidden;
   .block-color {
@@ -450,20 +449,20 @@
     }
   }
 
-
   .pagination {
     margin-top: 30px;
+    border: none;
 
     .pagination-nav:active {
       background-color: #ffffff;
       color: #5e50a1;
     }
 
-    // .pagination-nav .page-link:hover {
-    //   background-color: #5e50a1c4;
-    // }
+    .pagination-nav .page-link:hover {
+      background-color: #5e50a1c4;
+    }
 
-    .pagination-nav .page-link.active {
+    .pagination-number-active {
       background-color: #5e50a1;
       color: #ffffff;
     }
@@ -482,7 +481,8 @@
 
     .pagination-previous:hover,
     .pagination-next:hover {
-      background-color: #5e50a1;
+      background-color: #7262c3;
+      border-color: #7262c3;
       color: #ffffff;
     }
 
@@ -492,8 +492,8 @@
     }
 
     .pagination-number:hover {
-      background-color: #5e50a1;
-      border-color: #5e50a1;
+      background-color: #7262c3;
+      border-color: #7262c3;
       color: white;
     }
 
@@ -501,6 +501,10 @@
       background-color: #5e50a1 !important;
       border-color: #5e50a1 !important;
       color: white;
+    }
+
+    button:hover {
+      background-color: #7262c3;
     }
   }
 }

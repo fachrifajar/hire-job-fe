@@ -16,6 +16,7 @@ const Jobs = (props) => {
   const router = useRouter();
   // const JobList = props.JobList;
   // console.log(JobList.data.rows[0]);
+  console.log(props.JobList);
 
   const [isAuth, setIsAuth] = React.useState(false);
   const [getData, setGetData] = React.useState(null);
@@ -175,131 +176,7 @@ const Jobs = (props) => {
         <link rel="icon" href="/images/logo.png" />
       </Head>
       <main id={`${style["job-page"]}`}>
-        <section id={style["main-nav"]}>
-          <nav className={style["main-nav"]}>
-            <div className={style["logo"]}>
-              <img
-                className={style["main-logo"]}
-                src="/images/logo-text-2.png"
-                alt="main logo"
-              />
-            </div>
-
-            {isAuth ? (
-              <ul>
-                <li>
-                  <FaRegBell className={`${style["react-icons-1"]}`} />
-                </li>
-                <li>
-                  <FaRegEnvelope className={`${style["react-icons-2"]}`} />
-                </li>
-                <li className={`nav-item dropdown ${style["nav-item"]}`}>
-                  <a
-                    className="nav-link dropdown-toggles"
-                    href="#"
-                    role="button"
-                    // data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <img
-                      src={profPict}
-                      alt="user pp"
-                      onClick={handleDropdown}
-                    />
-                  </a>
-                  {showDropdown ? (
-                    <div className={style["dropdown-container"]}>
-                      <ul className={`dropdown-menu ${style["drop-down"]}`}>
-                        <li>
-                          <a
-                            className={`dropdown-item ${style["dropdown-item"]}`}
-                            href="#">
-                            Home
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className={`dropdown-item ${style["dropdown-item"]}`}
-                            href="#">
-                            Profile
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className={`dropdown-item ${style["dropdown-item"]}`}
-                            href="#"
-                            onClick={handleLogout}>
-                            Logout
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </li>
-              </ul>
-            ) : (
-              <div className={style["btn-group"]}>
-                <div id={style["signup-button"]}>
-                  <button
-                    type="button"
-                    className="btn btn-outline-light"
-                    onClick={handleSignup}>
-                    Sign Up
-                  </button>
-                </div>
-                <div id={style["login-button"]} className="mx-3">
-                  <button
-                    type="button"
-                    className="btn btn-outline-light"
-                    onClick={handleLogin}>
-                    Log In
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <ul
-              className={`${style["hamburger"]} ${
-                isMenuOpen ? style["show"] : style["hide"]
-              }`}>
-              <li>Notifications</li>
-              <li>Mail</li>
-              <li>Profile</li>
-              {isAuth ? (
-                <li>
-                  <a
-                    className={`dropdown-item ${style["dropdown-item"]}`}
-                    href="#"
-                    onClick={handleLogout}>
-                    Logout
-                  </a>
-                </li>
-              ) : (
-                <li>
-                  <a
-                    className={`dropdown-item ${style["dropdown-item"]}`}
-                    href="#"
-                    onClick={handleLogin}>
-                    Login
-                  </a>
-                </li>
-              )}
-            </ul>
-
-            <div className={style["menu-toggle"]} onClick={handleClick}>
-              {!isMenuOpen ? (
-                <>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </>
-              ) : (
-                <RxCross1 className={style["toggle-icon"]} />
-              )}
-            </div>
-          </nav>
-        </section>
+        <Navbar />
 
         <section id={style["jobs-content"]}>
           <div className={style["block-color"]}>
@@ -492,11 +369,15 @@ const Jobs = (props) => {
                       {[...new Array(totalPage)].map((item, key) => {
                         let position = ++key;
                         return (
-                          <li className="page-item" key={key}>
+                          <li
+                            className={`page-item ${style["page-item"]}`}
+                            key={key}>
                             <button
                               className={`page-link ${
-                                currentPage === position ? "active" : ""
-                              } ${style["pagination-number"]}`}
+                                currentPage === position
+                                  ? `${style["pagination-number-active"]}`
+                                  : `${style["pagination-number"]}`
+                              } `}
                               onClick={() => {
                                 fetchPagination(position);
                               }}>
