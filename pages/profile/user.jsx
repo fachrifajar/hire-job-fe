@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
-import style from "@/styles/jobs/hire.module.scss";
+import style from "@/styles/profile/user.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import {
   FaRegBell,
@@ -30,27 +30,6 @@ const Jobs = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState("portfolios");
-
-  const dummy = {
-    portfolios: [
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-    ],
-    portfoliosName: [
-      "Project-1",
-      "Project-2",
-      "Project-3",
-      "Project-4",
-      "Project-5",
-      "Project-6",
-    ],
-
-    experiences: ["/images/firewatch.jpg", "/images/auth-image.jpeg"],
-  };
 
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -148,7 +127,7 @@ const Jobs = (props) => {
   return (
     <>
       <Head>
-        <title>Hire</title>
+        <title>Profile</title>
         <meta name="description" content="hire job" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.png" />
@@ -156,8 +135,9 @@ const Jobs = (props) => {
       <main id={`${style["hire-page"]}`}>
         <Navbar />
 
-        <section id={style["hire-content"]}>
+        <section id={style["main-content"]}>
           <div className={`container ${style["container"]}`}>
+            {/* left-content */}
             <div className={`${style["left-content"]}`}>
               <img src="../../../images/blank-profile.png" alt="user pp" />
               <div className={style["text-content"]}>
@@ -247,125 +227,187 @@ const Jobs = (props) => {
                 </div>
               </div>
             </div>
-
-            <div className={`${style["right-content"]}`}>
-              <div className={`${style["input-content"]}`}>
-                <h3>Get in touch with Prospective Employees</h3>
-                <p>
-                  Kindly provide the necessary information to proceed with
-                  connecting you to the jobseeker
-                </p>
-                <form onSubmit={handleSubmit}>
-                  <div className={style["form-group"]}>
-                    <label className={style["top-label"]} htmlFor="reason">
-                      What is the purpose of contacting the jobseeker?
-                    </label>
-                    <div className={`form-check ${style["form-check"]}`}>
-                      <input
-                        className={style["form-check-input"]}
-                        type="radio"
-                        name="reason"
-                        id="projects"
-                        value="Projects"
-                        checked={selectedOption === "Projects"}
-                        onChange={handleOptionChange}
-                      />
-                      <label className="form-check-label" htmlFor="projects">
-                        Projects
-                      </label>
-                    </div>
-                    <div className={`form-check ${style["form-check"]}`}>
-                      <input
-                        className={style["form-check-input"]}
-                        type="radio"
-                        name="reason"
-                        id="offer"
-                        value="Offer"
-                        checked={selectedOption === "Offer"}
-                        onChange={handleOptionChange}
-                      />
-                      <label className="form-check-label" htmlFor="offer">
-                        Offer
-                      </label>
-                    </div>
-                    <div className={`form-check ${style["form-check"]}`}>
-                      <input
-                        className={style["form-check-input"]}
-                        type="radio"
-                        name="reason"
-                        id="other"
-                        value="Other"
-                        checked={selectedOption === "Other"}
-                        onChange={handleOptionChange}
-                      />
-                      <label className="form-check-label" htmlFor="other">
-                        Other
-                      </label>
-                    </div>
-                    {selectedOption === "Other" && (
-                      <div className="form-group mx-2">
-                        <input
-                          type="text"
-                          className={`form-control ${style["form-control"]}`}
-                          id="other"
-                          placeholder="Enter other reason"
-                          value={other}
-                          onChange={(e) => setOther(e.target.value)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className={`form-input ${style["form-group"]}`}>
-                    <label htmlFor="fullName">Full Name</label>
+            {/* right-content */}
+            <div className={style["right-content"]}>
+              <div className={`${style["personal-data-container"]}`}>
+                <div className={style["personal-data"]}>
+                  <h3>Personal Data</h3>
+                  <hr />
+                  <form>
+                    <label for="text">Name</label>
                     <input
                       type="text"
-                      className={`form-control ${style["form-control"]}`}
-                      id="fullName"
-                      placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      className="mb-3 form-control"
+                      placeholder="Enter your Name"
+                      // onChange={(event) => setUsername(event.target.value)}
                     />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="email">Email</label>
+                    <label for="text">Job Desk</label>
                     <input
-                      type="email"
-                      className={`form-control ${style["form-control"]}`}
-                      id="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Enter your Job Desk"
+                      // onChange={(event) => setUsername(event.target.value)}
                     />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="phone">Phone Number</label>
+                    <label for="text">Domicile</label>
                     <input
-                      type="number"
-                      className={`form-control ${style["form-control"]}`}
-                      id="phone"
-                      placeholder="Enter your phone number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Enter your Domicile"
+                      // onChange={(event) => setUsername(event.target.value)}
                     />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="description">Description</label>
+                    <label for="text">Workplace</label>
+                    <input
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Enter your Workplace"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <label for="text">Descriptions</label>
                     <textarea
-                      className={`form-control ${style["form-control"]}`}
-                      id="description"
-                      rows="5"
-                      placeholder="Enter description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      className="mb-3 form-control"
+                      placeholder="Enter your Descriptions. (A Specialist Developer, Problem Solver, etc)"
+                      // onChange={(event) => setUsername(event.target.value)}
                     />
-                  </div>
+                    <div className={`mt-5 ${style["button"]}`}>
+                      <button className="btn btn-primary" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
 
-                  <button
-                    type="submit"
-                    className={`btn btn-primary ${style["btn"]}`}>
-                    Submit
-                  </button>
-                </form>
+              <div className={`${style["skill-container"]}`}>
+                <div className={`${style["skill"]}`}>
+                  <h3>Skill</h3>
+                  <hr />
+                  <form>
+                    <input
+                      type="text"
+                      className="mt-3 form-control"
+                      placeholder="C++"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <div className={`mt-3 ${style["button"]}`}>
+                      <button className="btn btn-primary" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div className={`${style["experience-container"]}`}>
+                <div className={`${style["experience"]}`}>
+                  <h3>Job Experience</h3>
+                  <hr />
+                  <form>
+                    <label for="text">Position</label>
+                    <input
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Mobile Dev, Web Dev, Data Scientist"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <div className={style["exp-inline"]}>
+                      <div className={style["inline-1"]}>
+                        <label for="text">Company Name</label>
+                        <input
+                          type="text"
+                          className="mb-3 form-control"
+                          placeholder="PT. Ada Saja"
+                          // onChange={(event) => setUsername(event.target.value)}
+                        />
+                      </div>
+                      <div className={style["inline-2"]}>
+                        <label for="text">Date Start & End</label>
+                        <input
+                          type="text"
+                          className="mb-3 form-control"
+                          placeholder="DD-MMM-YYYY - DD-MMM-YYYY"
+                          // onChange={(event) => setUsername(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <label for="text">Descriptions</label>
+                    <textarea
+                      className="mb-3 form-control"
+                      placeholder="Short Descriptions"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <div className={`mt-3 ${style["button"]}`}>
+                      <button className="btn btn-primary" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div className={`${style["portfolio-container"]}`}>
+                <div className={`${style["portfolio"]}`}>
+                  <h3>Portfolio</h3>
+                  <hr />
+                  <form>
+                    {/* <label className={style["top-label"]} htmlFor="reason">
+                      Type of Portfolio ?
+                    </label> */}
+
+                    <label for="text">Project Name</label>
+                    <input
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Enter your Project Name"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <label for="text">Repository Link</label>
+                    <input
+                      type="text"
+                      className="mb-3 form-control"
+                      placeholder="Enter your Repository Link"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+
+                    <div className={style["exp-row"]}>
+                      <div className={style["row-1"]}>
+                        <input
+                          className={`mx-3 my-2 ${style["form-check-input"]}`}
+                          type="radio"
+                          name="reason"
+                          id="projects"
+                          value="Projects"
+                        />
+                        <label className="form-check-label" htmlFor="projects">
+                          Web App
+                        </label>
+                      </div>
+                      <div className={style["row-2"]}>
+                        <input
+                          className={`mx-3 my-3 ${style["form-check-input"]}`}
+                          type="radio"
+                          name="reason"
+                          id="projects"
+                          value="Projects"
+                        />
+                        <label className="form-check-label" htmlFor="projects">
+                          Mobile App
+                        </label>
+                      </div>
+                    </div>
+
+                    <label for="text">Descriptions</label>
+                    <textarea
+                      className="mb-3 form-control"
+                      placeholder="Short Descriptions"
+                      // onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <div className={`mt-3 ${style["button"]}`}>
+                      <button className="btn btn-primary" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
