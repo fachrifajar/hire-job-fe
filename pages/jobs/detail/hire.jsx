@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
-import style from "@/styles/jobs/detail.module.scss";
+import style from "@/styles/jobs/hire.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import {
   FaRegBell,
@@ -128,6 +128,23 @@ const Jobs = (props) => {
     );
   };
 
+  const [fullName, setFullName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [other, setOther] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState("");
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+    setOther("");
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(fullName, email, phone, description, selectedOption, other);
+  };
+
   return (
     <>
       <Head>
@@ -136,10 +153,10 @@ const Jobs = (props) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.png" />
       </Head>
-      <main id={`${style["detail-page"]}`}>
+      <main id={`${style["hire-page"]}`}>
         <Navbar />
 
-        <section id={style["detail-content"]}>
+        <section id={style["hire-content"]}>
           <div className={`container ${style["container"]}`}>
             <div className={`${style["left-content"]}`}>
               <img src="../../../images/blank-profile.png" alt="user pp" />
@@ -155,9 +172,6 @@ const Jobs = (props) => {
                   A Fullstack Developer, excellent in both Frontend and Backend.
                   Involved in many complicated project such as...
                 </p>
-                <button className={`btn btn-primary`} type="button">
-                  Hire
-                </button>
                 <h4>Skill</h4>
                 <div className={`${style["skill-badges"]}`}>
                   <span
@@ -235,59 +249,121 @@ const Jobs = (props) => {
             </div>
 
             <div className={`${style["right-content"]}`}>
-              <div className={style["top"]}>
-                <div
-                  className={`${
-                    selectedTab === "portfolios" ? style["active"] : ""
-                  } ${style["portfolios"]}`}
-                  onClick={() => setSelectedTab("portfolios")}>
-                  <h2>Portfolios</h2>
-                </div>
-                <div
-                  className={`${
-                    selectedTab === "experiences" ? style["active"] : ""
-                  } ${style["experiences"]}`}
-                  onClick={() => setSelectedTab("experiences")}>
-                  <h2>Experiences</h2>
-                </div>
-              </div>
-              {selectedTab === "portfolios" ? (
-                <div className={`${style["portfolio-container"]}`}>
-                  {dummy[selectedTab].map((image, index) => (
-                    <div className={`card ${style["card-container"]}`}>
-                      <img
-                        key={index}
-                        src={image}
-                        className="card-img-top"
-                        alt="..."
+              <div className={`${style["input-content"]}`}>
+                <h3>Get in touch with Prospective Employees</h3>
+                <p>
+                  Kindly provide the necessary information to proceed with
+                  connecting you to the jobseeker
+                </p>
+                <form onSubmit={handleSubmit}>
+                  <div className={style["form-group"]}>
+                    <label className={style["top-label"]} htmlFor="reason">
+                      What is the purpose of contacting the jobseeker?
+                    </label>
+                    <div className={`form-check ${style["form-check"]}`}>
+                      <input
+                        className={style["form-check-input"]}
+                        type="radio"
+                        name="reason"
+                        id="projects"
+                        value="Projects"
+                        checked={selectedOption === "Projects"}
+                        onChange={handleOptionChange}
                       />
-                      <div className={`${style["card-body"]}`}>
-                        <a href="#">
-                          <h5 className="card-title">Card title</h5>
-                        </a>
+                      <label className="form-check-label" htmlFor="projects">
+                        Projects
+                      </label>
+                    </div>
+                    <div className={`form-check ${style["form-check"]}`}>
+                      <input
+                        className={style["form-check-input"]}
+                        type="radio"
+                        name="reason"
+                        id="offer"
+                        value="Offer"
+                        checked={selectedOption === "Offer"}
+                        onChange={handleOptionChange}
+                      />
+                      <label className="form-check-label" htmlFor="offer">
+                        Offer
+                      </label>
+                    </div>
+                    <div className={`form-check ${style["form-check"]}`}>
+                      <input
+                        className={style["form-check-input"]}
+                        type="radio"
+                        name="reason"
+                        id="other"
+                        value="Other"
+                        checked={selectedOption === "Other"}
+                        onChange={handleOptionChange}
+                      />
+                      <label className="form-check-label" htmlFor="other">
+                        Other
+                      </label>
+                    </div>
+                    {selectedOption === "Other" && (
+                      <div className="form-group mx-2">
+                        <input
+                          type="text"
+                          className={`form-control ${style["form-control"]}`}
+                          id="other"
+                          placeholder="Enter other reason"
+                          value={other}
+                          onChange={(e) => setOther(e.target.value)}
+                        />
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={`${style["exp-container"]}`}>
-                  <div className={style["exp-detail"]}>
-                    <div className={style["exp-text"]}>
-                      <h5>Engineer</h5>
-                      <p>Tokopedia</p>
-                      <p>1 January 2022 - 1 February 2023</p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Perferendis amet explicabo delectus facilis reiciendis,
-                        officiis temporibus facere quidem ea quibusdam excepturi
-                        labore, maxime placeat repellat deleniti consectetur
-                        quis ullam ipsum!
-                      </p>
-                      <hr />
-                    </div>
+                    )}
                   </div>
-                </div>
-              )}
+                  <div className={`form-input ${style["form-group"]}`}>
+                    <label htmlFor="fullName">Full Name</label>
+                    <input
+                      type="text"
+                      className={`form-control ${style["form-control"]}`}
+                      id="fullName"
+                      placeholder="Enter your full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
+                  </div>
+                  <div className={`form-group ${style["form-group"]}`}>
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      className={`form-control ${style["form-control"]}`}
+                      id="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className={`form-group ${style["form-group"]}`}>
+                    <label htmlFor="phone">Phone Number</label>
+                    <input
+                      type="number"
+                      className={`form-control ${style["form-control"]}`}
+                      id="phone"
+                      placeholder="Enter your phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className={`form-group ${style["form-group"]}`}>
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      className={`form-control ${style["form-control"]}`}
+                      id="description"
+                      rows="5"
+                      placeholder="Enter description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Submit
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
