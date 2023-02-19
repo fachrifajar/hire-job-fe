@@ -1,22 +1,39 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect } from "react";
+import React from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
 import style from "../../styles/jobs/index.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
-import { FaRegBell, FaRegEnvelope, FaMapMarkerAlt } from "react-icons/fa";
-import { RxCross1 } from "react-icons/rx";
+import { FaMapMarkerAlt } from "react-icons/fa";
+
 import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
-import Link from "next/link";
-import nextConfig from "@/next.config";
+import { useSelector, useDispatch } from "react-redux";
+
+import * as user from "@/store/reducer/user";
 
 const Jobs = (props) => {
   const router = useRouter();
-  // const JobList = props.JobList;
-  // console.log(JobList.data.rows[0]);
-  console.log(props.JobList);
+
+  const store = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  // console.log("storezz", store);
+
+  const handleClickSlug = (id) => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/detail/${id}`)
+      .then(({ data }) => {
+        console.log("response", data);
+        dispatch(
+          user.setData({
+            data: data?.data[0],
+          })
+        );
+        router.push(`/jobs/detail/${id}`);
+      });
+  };
 
   const [isAuth, setIsAuth] = React.useState(false);
   const [getData, setGetData] = React.useState(null);
@@ -29,14 +46,6 @@ const Jobs = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [disablePagination, setDisablePagination] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const handleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
-  const handleClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   const fetchBySort = (pageParam, sortValue, orderValue) => {
     const offset = (pageParam - 1) * 10 + 1;
@@ -75,13 +84,6 @@ const Jobs = (props) => {
         setTotalPage(parseInt(Math.ceil(data?.data?.count / 10)));
         setCurrentPage(pageParam);
         setDisablePagination(false);
-        // console.log("paginate");
-        // console.log(data?.data);
-        // console.log(data?.data?.rows);
-        // console.log(data?.data?.rows?.length);
-        // console.log(Math.ceil(data?.data?.count / 10));
-        // console.log(pageParam);
-        // console.log("paginate");
       })
       .catch((err) => {
         setGetJobList([]);
@@ -97,14 +99,8 @@ const Jobs = (props) => {
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?keyword=${keyword}`)
       .then(({ data }) => {
-        // if (data.length == 0) {
-        //   return;
-        // }
         setGetJobList(data?.data.rows);
         setDisablePagination(false);
-        // console.log("fetchbykeyword");
-        // console.log(data?.data?.rows);
-        // console.log("fetchbykeyword");
       })
       .catch((err) => {
         setGetJobList([]);
@@ -138,28 +134,7 @@ const Jobs = (props) => {
 
     setTotalPage(parseInt(Math.ceil(memoizedJobList.count / 10)));
     setIsLoading(false);
-    // console.log("memoized");
-    // console.log(memoizedJobList.rows);
-    // console.log(parseInt(Math.ceil(memoizedJobList.count / 10)));
-    // console.log(memoizedJobList.count);
   }, [memoizedJobList]);
-
-  const profPict = getData?.photo_profile;
-
-  const handleLogout = () => {
-    deleteCookie("profile");
-    deleteCookie("token");
-    // router.push("/jobs");
-    window.location.reload();
-  };
-
-  const handleLogin = () => {
-    router.push("/auth/login");
-  };
-
-  const handleSignup = () => {
-    router.push("/auth/register");
-  };
 
   const capitalize = (str) => {
     return str.replace(/(^\w|\s\w)/g, function (letter) {
@@ -314,31 +289,42 @@ const Jobs = (props) => {
 
                           {job?.skills?.length !== 0 ? (
                             <React.Fragment>
-                              {job?.skills
-                                .map((item) => (
-                                  <span
-                                    className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
-                                    key={item}>
-                                    {item}
-                                  </span>
-                                ))
-                                .slice(0, 3)}
+                              {job?.skills.length <= 3
+                                ? job?.skills.map((item) => (
+                                    <span
+                                      className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
+                                      key={item}>
+                                      {item}
+                                    </span>
+                                  ))
+                                : job?.skills.slice(0, 3).map((item) => (
+                                    <span
+                                      className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}
+                                      key={item}>
+                                      {item}
+                                    </span>
+                                  ))}
 
-                              <span
-                                className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
-                                +
-                                {
-                                  job?.skills.slice(3, job?.skills?.length)
-                                    ?.length
-                                }
-                              </span>
+                              {job?.skills.length > 3 && (
+                                <span
+                                  className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
+                                  +
+                                  {
+                                    job?.skills.slice(3, job?.skills?.length)
+                                      ?.length
+                                  }
+                                </span>
+                              )}
                             </React.Fragment>
                           ) : null}
                         </div>
                         <div className={style["button-content"]}>
                           <button
                             className={`btn btn-primary btn-lg`}
-                            type="button">
+                            type="button"
+                            onClick={() => {
+                              handleClickSlug(job.id);
+                            }}>
                             See Profile
                           </button>
                         </div>
@@ -426,12 +412,9 @@ export const getServerSideProps = async (context) => {
   );
 
   const convertData = connect.data;
-  // console.log(convertData);
 
   const token = getCookie("token", context) || "";
   const profile = getCookie("profile", context) || "";
-  // console.log(token);
-  // console.log(profile);
 
   return {
     props: {

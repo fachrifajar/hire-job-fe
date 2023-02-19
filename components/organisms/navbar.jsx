@@ -5,11 +5,16 @@ import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import { FaRegBell, FaRegEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import * as auth from "@/store/reducer/auth";
+import { deleteAuthData } from "@/store/reducer/auth";
 
-const Navbar = (props) => {
+const Navbar = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  console.log(getCookie("token"));
+  const { auth } = useSelector((state) => state);
+  // console.log(auth.profile.user_id)
 
   const [isAuth, setIsAuth] = React.useState(false);
   const [getData, setGetData] = React.useState(null);
@@ -44,6 +49,7 @@ const Navbar = (props) => {
   const handleLogout = () => {
     deleteCookie("profile");
     deleteCookie("token");
+    dispatch(deleteAuthData());
     window.location.reload();
   };
 
@@ -54,6 +60,11 @@ const Navbar = (props) => {
   const handleSignup = () => {
     router.push("/auth/register");
   };
+
+  const handleProfile = () => {
+    router.push(`/profile/${auth.profile.user_id}`);
+  };
+
   return (
     <>
       <section id={style["main-nav"]}>
@@ -96,7 +107,8 @@ const Navbar = (props) => {
                       <li>
                         <a
                           className={`dropdown-item ${style["dropdown-item"]}`}
-                          href="#">
+                          href="#"
+                          onClick={handleProfile}>
                           Profile
                         </a>
                       </li>

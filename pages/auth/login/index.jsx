@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import AuthContent from "@/components/molecules/authContent";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
+import { useSelector, useDispatch } from "react-redux";
+import * as auth from "@/store/reducer/auth";
 
 const Login = (props) => {
   const router = useRouter();
@@ -14,6 +16,11 @@ const Login = (props) => {
   const [password, setPassword] = React.useState("");
   const [isError, setIsError] = React.useState(false);
   const [errMsg, setErrMsg] = React.useState("");
+
+  //REDUX
+  const dispatch = useDispatch();
+  // const auth = useSelector((state) => state);
+  // console.log(auth);
 
   React.useEffect(() => {
     const validateAcc = props.profile;
@@ -36,8 +43,7 @@ const Login = (props) => {
         email,
         password,
       });
-      // localStorage.setItem("token", connect?.data?.token);
-      // localStorage.setItem("profile", JSON.stringify(connect?.data?.data));
+
       setCookie("token", connect?.data?.token, {
         maxAge: 60 * 6 * 24,
       });
@@ -45,13 +51,12 @@ const Login = (props) => {
         maxAge: 60 * 6 * 24,
       });
 
-      // lebih baik dibuat conditional rendering didalam, dibanding dibuat 2 login pages
-      // if (connect?.data?.data?.recruiter_id) {
-      //   localStorage.setItem("token", connect?.data?.token);
-      //   localStorage.setItem("profile", JSON.stringify(connect?.data?.data));
-      // } else {
-      //   setIsError("ini login untuk users");
-      // }
+      //REDUX
+      const isRecruiter = connect?.data?.data?.recruiter_id !== 0;
+
+      dispatch(auth.setAuthToken(connect?.data?.token));
+      dispatch(auth.setAuthProfile(connect?.data?.data));
+      dispatch(auth.setAuthIsRecruiter(isRecruiter));
 
       setIsLoading(false);
       setIsError(false);

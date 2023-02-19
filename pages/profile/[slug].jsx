@@ -16,37 +16,32 @@ import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
 import Link from "next/link";
 import nextConfig from "@/next.config";
+import * as auth from "@/store/reducer/auth";
+import { useSelector, useDispatch } from "react-redux";
 
 const Jobs = (props) => {
   const router = useRouter();
-  // const JobList = props.JobList;
-  // console.log(JobList.data.rows[0]);
+
+  const auth = useSelector((state) => state);
+  console.log("auth", auth);
 
   const [isAuth, setIsAuth] = React.useState(false);
-  const [getData, setGetData] = React.useState(null);
   const [getToken, setGetToken] = React.useState(null);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [getJobList, setGetJobList] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState("portfolios");
+  const [specificData, setSpecificData] = React.useState([]);
 
-  const handleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
-  const handleClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  console.log(getJobList);
 
   React.useEffect(() => {
     let token = props.token;
-    let profile = props.profile;
 
     if (props.token && props.profile) {
       const convertData = JSON.parse(props.profile);
 
-      setGetData(convertData);
       setGetToken(token);
       setIsAuth(true);
     }
@@ -60,68 +55,83 @@ const Jobs = (props) => {
   }, [props.JobList]);
 
   React.useEffect(() => {
-    setGetJobList(memoizedJobList.rows);
+    setGetJobList(memoizedJobList[0]);
 
     setIsLoading(false);
-    // console.log("memoized");
-    // console.log(memoizedJobList.rows);
-    // console.log(memoizedJobList.count);
   }, [memoizedJobList]);
 
-  const profPict = getData?.photo_profile;
+  // const handleOptionChange = (event) => {
+  //   setSelectedOption(event.target.value);
+  //   setOther("");
+  // };
 
-  const handleLogout = () => {
-    deleteCookie("profile");
-    deleteCookie("token");
-    // router.push("/jobs");
-    window.location.reload();
-  };
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   console.log(fullName, email, phone, description, selectedOption, other);
+  // };
 
-  const handleLogin = () => {
-    router.push("/auth/login");
-  };
+  const [fullname, setFullname] = React.useState("");
+  const [job, setJob] = React.useState("");
+  const [domicile, setDomicile] = React.useState("");
+  const [company, setCompany] = React.useState("");
+  const [description, setDescription] = React.useState("");
 
-  const handleSignup = () => {
-    router.push("/auth/register");
+  const editProfile = () => {
+    event.preventDefault();
+    setIsLoading(true);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${getToken}`,
+      },
+    };
+
+    let data = {
+      fullname,
+      job,
+      domicile,
+      company,
+      description,
+    };
+
+    axios
+      .patch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`, data, config)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response.data);
+          console.log(response.status)
+          // res.status(200).json("successfully!");
+          window.location.reload();
+        }
+
+        // Swal.fire({
+        //   icon: "success",
+        //   title: `${response.data.message}`,
+        // });
+        // navigate("/");
+      })
+      .catch((error) => {
+        // err?.response?.data?.messages ??
+        // res.status(err?.response?.status ?? 500).json(errorMsg);
+        console.log(error);
+        // if (error.response.status === 401) {
+        //   localStorage.removeItem("persist:root");
+        //   navigate("/login");
+        // } else {
+        //   Swal.fire({
+        //     icon: "error",
+        //     title: `${error.response.data.message}`,
+        //   });
+        // }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const capitalize = (str) => {
     return str.replace(/(^\w|\s\w)/g, function (letter) {
       return letter.toUpperCase();
     });
-  };
-
-  const nameFilter = (str) => {
-    return str.replace(
-      /^(\b\w+\b)\s+(\b\w+\b)(?:\s+(\b\w+\b))?.*$/i,
-      function (match, firstWord, secondWord, thirdWord = "") {
-        return (
-          firstWord.charAt(0).toUpperCase() +
-          firstWord.slice(1) +
-          " " +
-          secondWord.charAt(0).toUpperCase() +
-          secondWord.slice(1) +
-          (thirdWord ? " " + thirdWord.charAt(0).toUpperCase() : "")
-        );
-      }
-    );
-  };
-
-  const [fullName, setFullName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [other, setOther] = React.useState("");
-  const [selectedOption, setSelectedOption] = React.useState("");
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-    setOther("");
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(fullName, email, phone, description, selectedOption, other);
   };
 
   return (
@@ -139,66 +149,35 @@ const Jobs = (props) => {
           <div className={`container ${style["container"]}`}>
             {/* left-content */}
             <div className={`${style["left-content"]}`}>
-              <img src="../../../images/blank-profile.png" alt="user pp" />
+              <img src={getJobList?.user?.photo_profile} alt="user pp" />
               <div className={style["text-content"]}>
-                <h2>{nameFilter("fachri fajar firmansyah")}</h2>
-                <p>Fullstack Developer</p>
+                <h2>{getJobList?.user?.fullname}</h2>
+                <p>{getJobList?.job}</p>
                 <div
                   className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
                   <FaMapMarkerAlt className={style["react-icons-3"]} />
-                  <p className="">Jakarta</p>
+                  <p className="">{getJobList?.domicile}</p>
                 </div>
                 <p className={`${style["description"]}`}>
-                  A Fullstack Developer, excellent in both Frontend and Backend.
-                  Involved in many complicated project such as...
+                  {getJobList?.description}
                 </p>
                 <h4>Skill</h4>
-                <div className={`${style["skill-badges"]}`}>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Golang
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    PHP
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Typescript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Postgres
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                </div>
+                {getJobList?.skills &&
+                JSON.parse(getJobList.skills)?.length !== 0 ? (
+                  <React.Fragment>
+                    <div className={`${style["skill-badges"]}`}>
+                      {JSON.parse(getJobList.skills).map((item, key) => (
+                        <span
+                          className={`badge text-bg-warning ${style["skill-badge"]}`}
+                          key={key}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </React.Fragment>
+                ) : (
+                  "-"
+                )}
 
                 {/* <span
                   className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
@@ -210,7 +189,7 @@ const Jobs = (props) => {
                     <span>
                       <FaRegEnvelope />
                     </span>
-                    xxx@gmail.com
+                    {getJobList?.user?.email}
                   </p>
                   <p>
                     <span>
@@ -239,37 +218,59 @@ const Jobs = (props) => {
                       type="text"
                       className="mb-3 form-control"
                       placeholder="Enter your Name"
-                      // onChange={(event) => setUsername(event.target.value)}
+                      onChange={(event) => setFullname(event.target.value)}
                     />
                     <label for="text">Job Desk</label>
                     <input
                       type="text"
                       className="mb-3 form-control"
                       placeholder="Enter your Job Desk"
-                      // onChange={(event) => setUsername(event.target.value)}
+                      onChange={(event) => setJob(event.target.value)}
                     />
                     <label for="text">Domicile</label>
                     <input
                       type="text"
                       className="mb-3 form-control"
                       placeholder="Enter your Domicile"
-                      // onChange={(event) => setUsername(event.target.value)}
+                      onChange={(event) => setDomicile(event.target.value)}
                     />
                     <label for="text">Workplace</label>
                     <input
                       type="text"
                       className="mb-3 form-control"
                       placeholder="Enter your Workplace"
-                      // onChange={(event) => setUsername(event.target.value)}
+                      onChange={(event) => setCompany(event.target.value)}
                     />
                     <label for="text">Descriptions</label>
                     <textarea
                       className="mb-3 form-control"
                       placeholder="Enter your Descriptions. (A Specialist Developer, Problem Solver, etc)"
-                      // onChange={(event) => setUsername(event.target.value)}
+                      onChange={(event) => setDescription(event.target.value)}
                     />
+
+                    {/* <button
+                      type="button"
+                      className={`${style.button} btn btn-primary ${
+                        isLoading ? "btn-loading" : ""
+                      }`}
+                      onClick={handleSubmit}
+                      disabled={isLoading}>
+                      {isLoading ? (
+                        <span
+                          class="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"></span>
+                      ) : (
+                        ""
+                      )}
+                      {isLoading ? "Loading..." : "Log in"}
+                    </button> */}
+
                     <div className={`mt-5 ${style["button"]}`}>
-                      <button className="btn btn-primary" type="submit">
+                      <button
+                        className="btn btn-primary"
+                        // type="submit"
+                        onClick={editProfile}>
                         Submit
                       </button>
                     </div>
@@ -427,17 +428,17 @@ const Jobs = (props) => {
 };
 
 export const getServerSideProps = async (context) => {
+  const { slug } = context.query;
+
   const connect = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=1`
+    `${process.env.NEXT_PUBLIC_API_URL}/v1/user/detail/${slug}`
   );
 
   const convertData = connect.data;
-  // console.log(convertData);
+  // console.log(convertData)
 
   const token = getCookie("token", context) || "";
   const profile = getCookie("profile", context) || "";
-  // console.log(token);
-  // console.log(profile);
 
   return {
     props: {

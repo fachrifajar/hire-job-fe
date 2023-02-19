@@ -5,10 +5,65 @@ import style from "../../../styles/register/user.module.scss";
 import { useRouter } from "next/router";
 import AuthContent from "@/components/molecules/authContent";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
+import axios from "axios";
 
-const Login = (props) => {
+const User = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [company, setCompany] = React.useState("");
+  const [position, setPosition] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [ReEnterPassword, SetReEnterPassword] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+  const [errMsg, setErrMsg] = React.useState("");
+
+  const handleRegister = async () => {
+    try {
+      if (!document.getElementById("terms").checked) {
+        setIsError(true);
+        setErrMsg("Please agree to the terms and conditions to continue.");
+        return;
+      }
+      if (!ReEnterPassword) {
+        setIsError(true);
+        setErrMsg("Re-enter password cannot be blank.");
+        return;
+      }
+      if (ReEnterPassword !== password) {
+        setIsError(true);
+        setErrMsg("Re-entered password does not match the password.");
+        return;
+      }
+
+      setIsLoading(true);
+
+      const connect = await axios.post("/api/register", {
+        fullname: username,
+        email,
+        phone_number: phoneNumber,
+        password,
+      });
+      setIsLoading(false);
+      setIsError(false);
+      router.push("/auth/login/");
+    } catch (error) {
+      // console.log(error?.response);
+      setIsLoading(false);
+      setIsError(true);
+      setErrMsg(
+        error?.response?.data?.messages ??
+          error?.response?.data?.message?.fullname?.message ??
+          error?.response?.data?.message?.email?.message ??
+          error?.response?.data?.message?.company?.message ??
+          error?.response?.data?.message?.position?.message ??
+          error?.response?.data?.message?.password?.message ??
+          "Internal server error, please try again later"
+      );
+    }
+  };
 
   React.useEffect(() => {
     const validateAcc = props.profile;
@@ -41,13 +96,19 @@ const Login = (props) => {
                 <h2>Hello, Developer !</h2>
                 <p>Create new account to access all features</p>
 
+                {isError ? (
+                  <div class="alert alert-danger" role="alert">
+                    {errMsg}
+                  </div>
+                ) : null}
+
                 <label for="text">Name</label>
                 <input
                   type="text"
                   className="mb-3 form-control"
                   id="name"
                   placeholder="Enter your Name"
-                  onChange={(event) => SetUsername(event.target.value)}
+                  onChange={(event) => setUsername(event.target.value)}
                 />
 
                 <label for="email">E-mail</label>
@@ -66,7 +127,7 @@ const Login = (props) => {
                   className="mb-3 form-control"
                   id="phone-number"
                   placeholder="Enter your Phone Number"
-                  onChange={(event) => Setphone_number(event.target.value)}
+                  onChange={(event) => setPhoneNumber(event.target.value)}
                 />
 
                 <label for="password">Password</label>
@@ -99,14 +160,14 @@ const Login = (props) => {
                   </label>
                 </div>
                 <div className="d-grid">
+                  {/* xx */}
                   <button
                     type="button"
                     className={`${style.button} btn btn-primary ${
                       isLoading ? "btn-loading" : ""
                     }`}
                     disabled={isLoading}
-                    // onClick={login}
-                  >
+                    onClick={handleRegister}>
                     {isLoading ? (
                       <span
                         class="spinner-border spinner-border-sm"
@@ -147,4 +208,4 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-export default Login;
+export default User;
