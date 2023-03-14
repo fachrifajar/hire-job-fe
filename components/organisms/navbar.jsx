@@ -67,6 +67,10 @@ const Navbar = () => {
     router.push(`/profile/${auth.profile.user_id}`);
   };
 
+  const handleHome = () => {
+    router.push(`/`);
+  };
+
   return (
     <>
       <section id={style["main-nav"]}>
@@ -102,7 +106,8 @@ const Navbar = () => {
                       <li>
                         <a
                           className={`dropdown-item ${style["dropdown-item"]}`}
-                          href="#">
+                          href="#"
+                          onClick={handleHome}>
                           Home
                         </a>
                       </li>
