@@ -16,48 +16,95 @@ import Navbar from "@/components/organisms/navbar";
 import Spinner from "@/components/atoms/spinner";
 import Link from "next/link";
 import nextConfig from "@/next.config";
+//MUI
+import {
+  Card,
+  CardContent,
+  Modal,
+  Button,
+  Typography,
+  Alert,
+  Checkbox,
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Grid,
+  Input,
+  Stack,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { styled } from "@mui/material/styles";
+
+const MyButton = styled(Button)({
+  width: "200px",
+  borderRadius: "10px",
+  marginTop: "20px",
+  background: "#5e50a1",
+  color: "white",
+  "&:hover": {
+    background: "#5e50a1c4",
+    border: "none",
+  },
+});
+
+const MyTextField = styled(TextField)({
+  "& label": {
+    // color: "#46505c",
+    marginTop: "-6px",
+  },
+  "& label.Mui-focused": {
+    color: "#5e50a1",
+  },
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    "& fieldset": {
+      borderColor: "#8692a6",
+    },
+    "&:hover fieldset": {
+      borderColor: "#5e50a1",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#5e50a1",
+    },
+  },
+});
+
+const MyCard = styled(Card)({
+  margin: "auto",
+  marginTop: "10%",
+  maxWidth: 500,
+  textAlign: "center",
+  borderRadius: "20px",
+  padding: "25px",
+  borderColor: "red",
+});
+
+const MyModal = styled(Modal)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  borderColor: "red",
+});
 
 const Jobs = (props) => {
   const router = useRouter();
   // const JobList = props.JobList;
   // console.log(JobList.data.rows[0]);
 
+  const [specificData, setSpecificData] = React.useState(null);
   const [isAuth, setIsAuth] = React.useState(false);
   const [getData, setGetData] = React.useState(null);
   const [getToken, setGetToken] = React.useState(null);
-  const [showDropdown, setShowDropdown] = React.useState(false);
-  const [getJobList, setGetJobList] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState("portfolios");
+  const [showModalSuccess, setShowModalSuccess] = React.useState(false);
 
-  const dummy = {
-    portfolios: [
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-      "/images/auth-image.jpeg",
-      "/images/firewatch.jpg",
-    ],
-    portfoliosName: [
-      "Project-1",
-      "Project-2",
-      "Project-3",
-      "Project-4",
-      "Project-5",
-      "Project-6",
-    ],
-
-    experiences: ["/images/firewatch.jpg", "/images/auth-image.jpeg"],
-  };
-
-  const handleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
-  const handleClick = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleCloseSuccess = () => {
+    setShowModalSuccess(false);
   };
 
   React.useEffect(() => {
@@ -70,41 +117,11 @@ const Jobs = (props) => {
       setGetData(convertData);
       setGetToken(token);
       setIsAuth(true);
+      setSpecificData(props.JobList?.data?.[0]);
     }
   }, []);
 
-  const memoizedJobList = React.useMemo(() => {
-    if (props.JobList !== undefined) {
-      return props.JobList.data;
-    }
-    return [];
-  }, [props.JobList]);
-
-  React.useEffect(() => {
-    setGetJobList(memoizedJobList.rows);
-
-    setIsLoading(false);
-    // console.log("memoized");
-    // console.log(memoizedJobList.rows);
-    // console.log(memoizedJobList.count);
-  }, [memoizedJobList]);
-
-  const profPict = getData?.photo_profile;
-
-  const handleLogout = () => {
-    deleteCookie("profile");
-    deleteCookie("token");
-    // router.push("/jobs");
-    window.location.reload();
-  };
-
-  const handleLogin = () => {
-    router.push("/auth/login");
-  };
-
-  const handleSignup = () => {
-    router.push("/auth/register");
-  };
+  console.log("getData=>", getData);
 
   const capitalize = (str) => {
     return str.replace(/(^\w|\s\w)/g, function (letter) {
@@ -128,12 +145,34 @@ const Jobs = (props) => {
     );
   };
 
-  const [fullName, setFullName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  let isDisabled = true;
+
+  const [fullname, setFullname] = React.useState(null);
+  const [isErrName, setIsErrName] = React.useState(false);
+  const [errMsgName, setErrMsgName] = React.useState("");
+
   const [other, setOther] = React.useState("");
+  const [isErrOther, setIsErrOther] = React.useState(false);
+  const [errMsgOther, setErrMsgOther] = React.useState("");
+
+  const [email, setEmail] = React.useState(null);
+  const [isErrEmail, setIsErrEmail] = React.useState(false);
+  const [errMsgEmail, setErrMsgEmail] = React.useState("");
+
+  const [phone, setPhone] = React.useState(null);
+  const [isErrPhone, setIsErrPhone] = React.useState(false);
+  const [errMsgPhone, setErrMsgPhone] = React.useState("");
+
+  const [description, setDescription] = React.useState("");
+  const [isErrDescription, setIsErrDescription] = React.useState(false);
+  const [errMsgDescription, setErrMsgDescription] = React.useState("");
+
   const [selectedOption, setSelectedOption] = React.useState("");
+  console.log("selectedOption---", selectedOption);
+  if ((other || selectedOption) && fullname && email && phone && description) {
+    isDisabled = false;
+  }
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -142,7 +181,110 @@ const Jobs = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(fullName, email, phone, description, selectedOption, other);
+    console.log(fullname, email, phone, description, selectedOption, other);
+  };
+
+  const handleChangeName = (event) => {
+    const name = event.target.value;
+    const strRegex = /^(?=.*\S)[A-Za-z ]{5,35}$/;
+    if (!strRegex.test(name)) {
+      setErrMsgName(
+        "Name must contain only letters and spaces, and be between 5-35 characters long."
+      );
+      setIsErrName(true);
+      setFullname(null);
+      return;
+    }
+    setIsErrName(false);
+    setFullname(name);
+  };
+
+  const handleChangeOther = (event) => {
+    const otherPurpose = event.target.value;
+    const strRegex = /^(?=.*\S)[A-Za-z ]{5,20}$/;
+    if (!strRegex.test(otherPurpose)) {
+      setErrMsgOther(
+        "Purpose must contain only letters and spaces, and be between 5-20 characters long."
+      );
+      setIsErrOther(true);
+      setOther(null);
+      return;
+    }
+    setIsErrOther(false);
+    setOther(otherPurpose);
+  };
+
+  const handleChangeEmail = (event) => {
+    const email = event.target.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrMsgEmail("Please enter a valid email address");
+      setIsErrEmail(true);
+      setEmail(null);
+      return;
+    }
+    setIsErrEmail(false);
+    setEmail(email);
+  };
+
+  const handleChangePhone = (event) => {
+    const phoneNum = event.target.value.replace(/\D/g, "");
+    const phoneRegex = /^[0-9]+$/;
+    if (!phoneRegex.test(phoneNum)) {
+      setErrMsgPhone("Please enter a valid phone number");
+      setIsErrPhone(true);
+      setPhone(null);
+      return;
+    }
+    setIsErrPhone(false);
+    setPhone(phoneNum);
+  };
+
+  const handleChangeDescription = (event) => {
+    const descriptions = event.target.value;
+    const strRegex = /^(?=.*\S)[A-Za-z ]{10,20}$/;
+    if (!strRegex.test(descriptions)) {
+      setErrMsgDescription(
+        "Name must contain only letters and spaces, and be between 10-20 characters long."
+      );
+      setIsErrDescription(true);
+      setDescription(null);
+      return;
+    }
+    setIsErrDescription(false);
+    setDescription(descriptions);
+  };
+
+  const executeHire = async () => {
+    try {
+      setIsLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${getToken}`,
+        },
+      };
+
+      let data = {
+        user_id: getData.id,
+        purpose: selectedOption == "Other" ? other : selectedOption,
+        fullname,
+        email,
+        phone_number: phone,
+        description,
+      };
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/invitation`,
+        data,
+        config
+      );
+
+      setIsLoading(false);
+      setShowModalSuccess(true);
+    } catch (error) {
+      console.log("error---", error);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -155,82 +297,59 @@ const Jobs = (props) => {
       </Head>
       <main id={`${style["hire-page"]}`}>
         <Navbar />
-
+        <MyModal open={showModalSuccess} onClose={handleCloseSuccess}>
+          <MyCard>
+            <CardContent>
+              <Alert
+                variant="filled"
+                severity="success"
+                sx={{ justifyContent: "center" }}>
+                <strong style={{ fontSize: "16px" }}>
+                  Success update data!
+                </strong>
+              </Alert>
+            </CardContent>
+          </MyCard>
+        </MyModal>
         <section id={style["hire-content"]}>
           <div className={`container ${style["container"]}`}>
             <div className={`${style["left-content"]}`}>
-              <img src="../../../images/blank-profile.png" alt="user pp" />
+              <img src={specificData?.user?.photo_profile} alt="user pp" />
               <div className={style["text-content"]}>
-                <h2>{nameFilter("fachri fajar firmansyah")}</h2>
-                <p>Fullstack Developer</p>
+                <h2>{specificData?.user?.fullname}</h2>
+                <p>{specificData?.job}</p>
                 <div
                   className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
                   <FaMapMarkerAlt className={style["react-icons-3"]} />
-                  <p className="">Jakarta</p>
+                  <p className="">{specificData?.domicile}</p>
                 </div>
                 <p className={`${style["description"]}`}>
-                  A Fullstack Developer, excellent in both Frontend and Backend.
-                  Involved in many complicated project such as...
+                  {specificData?.description}
                 </p>
                 <h4>Skill</h4>
-                <div className={`${style["skill-badges"]}`}>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Golang
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    PHP
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Typescript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Postgres
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                  <span
-                    className={`badge text-bg-warning ${style["skill-badge"]}`}>
-                    Javascript
-                  </span>
-                </div>
-
-                {/* <span
-                  className={`badge text-bg-warning mx-1 ${style["skill-badge"]}`}>
-                  +{job?.skills.slice(3, job?.skills?.length)?.length}
-                </span> */}
+                {specificData?.skills &&
+                JSON.parse(specificData?.skills)?.length !== 0 ? (
+                  <React.Fragment>
+                    <div className={`${style["skill-badges"]}`}>
+                      {JSON.parse(specificData?.skills).map((item, key) => (
+                        <span
+                          className={`badge text-bg-warning ${style["skill-badge"]}`}
+                          key={key}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </React.Fragment>
+                ) : (
+                  "-"
+                )}
 
                 <div className={style["left-icons"]}>
                   <p>
                     <span>
                       <FaRegEnvelope />
                     </span>
-                    xxx@gmail.com
+                    {specificData?.user?.email}
                   </p>
                   <p>
                     <span>
@@ -302,70 +421,218 @@ const Jobs = (props) => {
                         Other
                       </label>
                     </div>
-                    {selectedOption === "Other" && (
-                      <div className="form-group mx-2">
-                        <input
-                          type="text"
-                          className={`form-control ${style["form-control"]}`}
-                          id="other"
-                          placeholder="Enter other reason"
+                    {selectedOption === "Other" &&
+                      (isErrOther ? (
+                        <MyTextField
+                          error
+                          id="standard-error-helper-text"
+                          helperText={errMsgOther}
+                          label="Other Purpose"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                          placeholder="Enter your Other Purpose"
                           value={other}
-                          onChange={(e) => setOther(e.target.value)}
+                          onChange={handleChangeOther}
+                          InputProps={{
+                            inputProps: {
+                              maxLength: 20,
+                            },
+                          }}
                         />
-                      </div>
-                    )}
-                  </div>
-                  <div className={`form-input ${style["form-group"]}`}>
-                    <label htmlFor="fullName">Full Name</label>
-                    <input
-                      type="text"
-                      className={`form-control ${style["form-control"]}`}
-                      id="fullName"
-                      placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                    />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      className={`form-control ${style["form-control"]}`}
-                      id="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="phone">Phone Number</label>
-                    <input
-                      type="number"
-                      className={`form-control ${style["form-control"]}`}
-                      id="phone"
-                      placeholder="Enter your phone number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                  <div className={`form-group ${style["form-group"]}`}>
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                      className={`form-control ${style["form-control"]}`}
-                      id="description"
-                      rows="5"
-                      placeholder="Enter description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
+                      ) : (
+                        <MyTextField
+                          label="Other Purpose"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                          placeholder="Enter your Other Purpose"
+                          value={other}
+                          onChange={handleChangeOther}
+                          InputProps={{
+                            inputProps: {
+                              maxLength: 20,
+                            },
+                          }}
+                        />
+                      ))}
                   </div>
 
-                  <button
-                    type="submit"
-                    className={`btn btn-primary ${style["btn"]}`}>
-                    Submit
-                  </button>
+                  {isErrName ? (
+                    <MyTextField
+                      error
+                      id="standard-error-helper-text"
+                      helperText={errMsgName}
+                      label="Name"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Name"
+                      value={fullname}
+                      onChange={handleChangeName}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 35,
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MyTextField
+                      label="Name"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Name"
+                      value={fullname}
+                      onChange={handleChangeName}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 35,
+                        },
+                      }}
+                    />
+                  )}
+
+                  {isErrEmail ? (
+                    <MyTextField
+                      error
+                      id="standard-error-helper-text"
+                      helperText={errMsgEmail}
+                      label="Email"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Email"
+                      value={email}
+                      onChange={handleChangeEmail}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 50,
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MyTextField
+                      label="Email"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Email"
+                      value={email}
+                      onChange={handleChangeEmail}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 50,
+                        },
+                      }}
+                    />
+                  )}
+
+                  {isErrPhone ? (
+                    <MyTextField
+                      error
+                      id="standard-error-helper-text"
+                      helperText={errMsgPhone}
+                      label="Phone"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Phone Number"
+                      value={phone}
+                      onChange={handleChangePhone}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 15,
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MyTextField
+                      label="Phone"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Phone Number"
+                      value={phone}
+                      onChange={handleChangePhone}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 15,
+                        },
+                      }}
+                    />
+                  )}
+
+                  {isErrDescription ? (
+                    <MyTextField
+                      error
+                      id="standard-error-helper-text"
+                      helperText={errMsgDescription}
+                      label="Description"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Description"
+                      value={description}
+                      onChange={handleChangeDescription}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 15,
+                        },
+                      }}
+                    />
+                  ) : (
+                    <MyTextField
+                      label="Description"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="Enter your Description"
+                      value={description}
+                      onChange={handleChangeDescription}
+                      InputProps={{
+                        inputProps: {
+                          maxLength: 15,
+                        },
+                      }}
+                    />
+                  )}
                 </form>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {isDisabled ? (
+                    <MyButton
+                      disabled
+                      variant="contained"
+                      color="primary"
+                      // fullWidth
+                      onClick={executeHire}>
+                      Sent
+                    </MyButton>
+                  ) : isLoading ? (
+                    <LoadingButton
+                      loading={isLoading}
+                      variant="contained"
+                      color="primary"
+                      // fullWidth
+                      sx={{
+                        borderRadius: "20px",
+                        marginTop: "20px",
+                        background: "#5e50a1",
+                        color: "black",
+                      }}
+                      onClick={executeHire}>
+                      {isLoading ? "Loading..." : "Sent"}
+                    </LoadingButton>
+                  ) : (
+                    <MyButton
+                      variant="contained"
+                      color="primary"
+                      // fullWidth
+                      onClick={executeHire}>
+                      Sent
+                    </MyButton>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -385,8 +652,10 @@ const Jobs = (props) => {
 };
 
 export const getServerSideProps = async (context) => {
+  const { hire } = context.query;
+
   const connect = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/v1/user/list?limit=10&page=1`
+    `${process.env.NEXT_PUBLIC_API_URL}/v1/user/detail/${hire}`
   );
 
   const convertData = connect.data;

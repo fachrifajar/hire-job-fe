@@ -50,7 +50,7 @@ const Navbar = () => {
     deleteCookie("profile");
     deleteCookie("token");
     dispatch(deleteAuthData());
-    window.location.reload();
+    router.push("/auth/login");
   };
 
   const handleLogin = () => {

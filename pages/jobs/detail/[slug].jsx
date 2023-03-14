@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import Navbar from "@/components/organisms/navbar";
 import * as user from "@/store/reducer/user";
+
 import { useSelector, useDispatch } from "react-redux";
 
 const Jobs = (props) => {
@@ -24,7 +25,7 @@ const Jobs = (props) => {
 
   const user = useSelector((state) => state);
 
-  // console.log(user?.user?.data);
+  console.log("user==>", user?.user?.data?.data?.id);
 
   const capitalize = (str) => {
     return str.replace(/(^\w|\s\w)/g, function (letter) {
@@ -83,14 +84,17 @@ const Jobs = (props) => {
                 <p className={`${style["description"]}`}>
                   {user?.user?.data?.data?.description}
                 </p>
-                <button
-                  className={`btn btn-primary`}
-                  type="button"
-                  onClick={() => {
-                    router.push(`/jobs/detail/hire/${user?.id}`);
-                  }}>
-                  Hire
-                </button>
+                {user?.auth?.profile?.recruiter_id == 0 ? null : (
+                  <button
+                    className={`btn btn-primary`}
+                    type="button"
+                    onClick={() => {
+                      router.push(`/jobs/detail/hire/${user?.user?.data?.data?.id}`);
+                    }}>
+                    Hire
+                  </button>
+                )}
+
                 <h4>Skill</h4>
 
                 {JSON.parse(user?.user?.data?.data?.skills).length !== 0 ? (

@@ -131,7 +131,7 @@
     .right-content {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       border-radius: 10px;
       padding: 40px;
       position: relative;
@@ -140,6 +140,7 @@
       right: 10px;
       top: 50px;
       height: auto;
+      // margin-bottom: 100px;
 
       h3 {
         display: flex;
@@ -150,11 +151,11 @@
         // margin-bottom: 20px;
       }
 
-      p {
-        display: flex;
-        justify-content: center;
-        color: #46505c;
-      }
+      // p {
+      //   display: flex;
+      //   justify-content: center;
+      //   color: #46505c;
+      // }
 
       .form-group {
         margin-bottom: 30px;
@@ -180,34 +181,34 @@
           font-size: 16px;
         }
 
-        input[type="email"]::placeholder,
-        input[type="password"]::placeholder,
-        input[type="text"]::placeholder,
-        input[type="number"]::placeholder,
-        textarea::placeholder {
-          filter: brightness(150%);
-        }
+        // input[type="email"]::placeholder,
+        // input[type="password"]::placeholder,
+        // input[type="text"]::placeholder,
+        // input[type="number"]::placeholder,
+        // textarea::placeholder {
+        //   filter: brightness(150%);
+        // }
 
-        input[type="email"]:hover,
-        input[type="password"]:hover,
-        input[type="text"]:hover,
-        input[type="number"]:hover,
-        textarea:hover {
-          background: #ffffff;
-          border: 1px solid #5e50a1;
-          box-shadow: 0px 4px 10px 3px rgba(0, 0, 0, 0.11);
-          border-radius: 6px;
-        }
+        // input[type="email"]:hover,
+        // input[type="password"]:hover,
+        // input[type="text"]:hover,
+        // input[type="number"]:hover,
+        // textarea:hover {
+        //   background: #ffffff;
+        //   border: 1px solid #5e50a1;
+        //   box-shadow: 0px 4px 10px 3px rgba(0, 0, 0, 0.11);
+        //   border-radius: 6px;
+        // }
 
-        input[type="email"],
-        input[type="password"],
-        input[type="text"],
-        input[type="number"],
-        textarea {
-          background: #ffffff;
-          border: 1px solid #8692a6;
-          border-radius: 6px;
-        }
+        // input[type="email"],
+        // input[type="password"],
+        // input[type="text"],
+        // input[type="number"],
+        // textarea {
+        //   background: #ffffff;
+        //   border: 1px solid #8692a6;
+        //   border-radius: 6px;
+        // }
 
         .form-check-input {
           color: #5e50a1;

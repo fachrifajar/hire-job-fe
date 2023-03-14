@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.122",
+    "@mui/material": "^5.11.12",
+    "@mui/x-date-pickers": "^6.0.1",
     "@next/font": "13.1.6",
     "@reduxjs/toolkit": "^1.9.2",
     "axios": "^1.2.6",
@@ -16,6 +22,7 @@
     "cookies-next": "^2.1.1",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "moment": "^2.29.4",
     "next": "13.1.6",
     "react": "18.2.0",
     "react-bootstrap": "^2.7.0",
