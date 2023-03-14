@@ -27,12 +27,6 @@ const Jobs = (props) => {
 
   console.log("user==>", user?.user?.data?.data?.id);
 
-  const capitalize = (str) => {
-    return str.replace(/(^\w|\s\w)/g, function (letter) {
-      return letter.toUpperCase();
-    });
-  };
-
   const nameFilter = (str) => {
     return str.replace(
       /^(\b\w+\b)\s+(\b\w+\b)(?:\s+(\b\w+\b))?.*$/i,
@@ -68,18 +62,12 @@ const Jobs = (props) => {
                 alt="user pp"
               />
               <div className={style["text-content"]}>
-                <h2>
-                  {nameFilter(
-                    capitalize(user?.user?.data?.data?.user?.fullname)
-                  )}
-                </h2>
-                <p>{capitalize(user?.user?.data?.data?.job)}</p>
+                <h2>{nameFilter(user?.user?.data?.data?.user?.fullname)}</h2>
+                <p>{user?.user?.data?.data?.job}</p>
                 <div
                   className={`d-flex align-items-center gap-2 ${style["card-icon"]}`}>
                   <FaMapMarkerAlt className={style["react-icons-3"]} />
-                  <p className="">
-                    {capitalize(user?.user?.data?.data?.domicile)}
-                  </p>
+                  <p className="">{user?.user?.data?.data?.domicile}</p>
                 </div>
                 <p className={`${style["description"]}`}>
                   {user?.user?.data?.data?.description}
@@ -89,7 +77,9 @@ const Jobs = (props) => {
                     className={`btn btn-primary`}
                     type="button"
                     onClick={() => {
-                      router.push(`/jobs/detail/hire/${user?.user?.data?.data?.id}`);
+                      router.push(
+                        `/jobs/detail/hire/${user?.user?.data?.data?.id}`
+                      );
                     }}>
                     Hire
                   </button>

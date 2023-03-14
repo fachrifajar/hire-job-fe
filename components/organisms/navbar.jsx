@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import * as auth from "@/store/reducer/auth";
 import { deleteAuthData } from "@/store/reducer/auth";
+import { deleteData } from "@/store/reducer/user";
 
 const Navbar = () => {
   const router = useRouter();
@@ -50,6 +51,7 @@ const Navbar = () => {
     deleteCookie("profile");
     deleteCookie("token");
     dispatch(deleteAuthData());
+    dispatch(deleteData());
     router.push("/auth/login");
   };
 

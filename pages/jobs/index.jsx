@@ -319,14 +319,16 @@ const Jobs = (props) => {
                           ) : null}
                         </div>
                         <div className={style["button-content"]}>
-                          <button
-                            className={`btn btn-primary btn-lg`}
-                            type="button"
-                            onClick={() => {
-                              handleClickSlug(job.id);
-                            }}>
-                            See Profile
-                          </button>
+                          {isAuth && (
+                            <button
+                              className={`btn btn-primary btn-lg`}
+                              type="button"
+                              onClick={() => {
+                                handleClickSlug(job.id);
+                              }}>
+                              See Profile
+                            </button>
+                          )}
                         </div>
                       </div>
                     </React.Fragment>

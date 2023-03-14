@@ -68,7 +68,7 @@ const User = (props) => {
   React.useEffect(() => {
     const validateAcc = props.profile;
     if (validateAcc) {
-      router.replace("/");
+      router.replace("/jobs");
     }
   }, []);
 
