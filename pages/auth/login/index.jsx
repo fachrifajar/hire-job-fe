@@ -99,7 +99,7 @@ const Login = (props) => {
 
             {/* end of left content */}
             {/* right content */}
-            <div className={`col-lg-6 col-12 d-flex ${style["right-side"]}`}>
+            <div className={`col-lg-6 col-12 col-md-12 d-flex ${style["right-side"]}`}>
               {/* input email */}
               <div className="form-group">
                 <h2>Hello, Pewpeople</h2>

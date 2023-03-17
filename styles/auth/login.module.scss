@@ -3,6 +3,8 @@
 // }
 
 #login-page-users {
+  overflow: hidden;
+
   .left-side {
     background-image: url(/images/auth-image-2.jpg);
     background-size: cover;
@@ -43,7 +45,6 @@
       @media (max-width: 590px) {
         // font-size: 33px;
         padding-top: 50px;
-        
       }
     }
 
@@ -150,6 +151,22 @@
       color: #2e266f;
       text-decoration: none;
       cursor: pointer;
+    }
+  }
+  @media (max-width: 600px) {
+    .right-side {
+      margin: 0 0 0 5px;
+
+      h2 {
+        margin-top: -120px;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 45px;
+        line-height: 70px;
+        display: flex;
+        text-transform: capitalize;
+        color: #2e266f;
+      }
     }
   }
 }
