@@ -156,6 +156,52 @@ const Navbar = () => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const [messageEl, setMessageEl] = React.useState(null);
+  const [getSpecificHire, setGetSpecificHire] = React.useState(null);
+  const [specificModal, setSpecificModal] = React.useState(false);
+
+  const handleCloseMessage = () => {
+    setMessageEl(false);
+  };
+
+  const handleOpenMessage = () => {
+    setMessageEl(true);
+  };
+
+  const handleCloseSpecificModal = () => {
+    setSpecificModal(false);
+  };
+
+  const handleOpenSpecificModal = async () => {
+    setSpecificModal(true);
+  };
+
+  const handleFetchSpecific = async (id) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/invitation/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
+      setGetSpecificHire(response?.data?.data?.[0]);
+
+      // const response2 = await axios.get(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${getCookie("token")}`,
+      //     },
+      //   }
+      // );
+      // setGetProfile(response2?.data?.data?.[0]?.hire_histories);
+    } catch (error) {
+      console.log("errorFetchHire=>", error);
+    }
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -193,11 +239,9 @@ const Navbar = () => {
       }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}>
-      <MenuItem>
+      <MenuItem onClick={handleOpenMessage}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge
-            badgeContent={getProfile?.hire_histories?.length}
-            color="error">
+          <Badge badgeContent={getProfile?.length} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -246,54 +290,6 @@ const Navbar = () => {
     </Menu>
   );
 
-  const [messageEl, setMessageEl] = React.useState(null);
-  const [getSpecificHire, setGetSpecificHire] = React.useState(null);
-  const [specificModal, setSpecificModal] = React.useState(false);
-
-  const handleCloseMessage = () => {
-    setMessageEl(false);
-  };
-
-  const handleOpenMessage = () => {
-    setMessageEl(true);
-  };
-
-  const handleCloseSpecificModal = () => {
-    setSpecificModal(false);
-  };
-
-  const handleOpenSpecificModal = async () => {
-    setSpecificModal(true);
-  };
-
-  const handleFetchSpecific = async (id) => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/invitation/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${getCookie("token")}`,
-          },
-        }
-      );
-      setGetSpecificHire(response?.data?.data?.[0]);
-      // console.log("response=>", response?.data?.data?.[0]);
-
-      // const response2 = await axios.get(
-      //   `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${getCookie("token")}`,
-      //     },
-      //   }
-      // );
-      // setGetProfile(response2?.data?.data?.[0]?.hire_histories);
-    } catch (error) {
-      console.log("errorFetchHire=>", error);
-    }
-  };
-
-  // console.log("getProfile=>", getProfile);
   const renderMessageMenu = (
     <MyModal open={messageEl} onClose={handleCloseMessage}>
       <MyCard>
