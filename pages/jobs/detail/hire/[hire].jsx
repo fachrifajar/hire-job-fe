@@ -122,6 +122,7 @@ const Jobs = (props) => {
   }, []);
 
   console.log("getData=>", getData);
+  console.log("specificData=>", specificData);
 
   const capitalize = (str) => {
     return str.replace(/(^\w|\s\w)/g, function (letter) {
@@ -242,10 +243,9 @@ const Jobs = (props) => {
 
   const handleChangeDescription = (event) => {
     const descriptions = event.target.value;
-    const strRegex = /^(?=.*\S)[A-Za-z ]{10,20}$/;
-    if (!strRegex.test(descriptions)) {
+    if (descriptions.length < 10 || descriptions.length > 250) {
       setErrMsgDescription(
-        "Name must contain only letters and spaces, and be between 10-20 characters long."
+        "Name must contain only letters and spaces, and be between 10-250 characters long."
       );
       setIsErrDescription(true);
       setDescription(null);
@@ -265,7 +265,7 @@ const Jobs = (props) => {
       };
 
       let data = {
-        user_id: getData.id,
+        user_id: specificData?.id,
         purpose: selectedOption == "Other" ? other : selectedOption,
         fullname,
         email,
@@ -577,7 +577,7 @@ const Jobs = (props) => {
                       onChange={handleChangeDescription}
                       InputProps={{
                         inputProps: {
-                          maxLength: 15,
+                          maxLength: 250,
                         },
                       }}
                     />
@@ -592,7 +592,7 @@ const Jobs = (props) => {
                       onChange={handleChangeDescription}
                       InputProps={{
                         inputProps: {
-                          maxLength: 15,
+                          maxLength: 250,
                         },
                       }}
                     />

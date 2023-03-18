@@ -21,11 +21,13 @@ import {
   CardContent,
   CardMedia,
   Stack,
+  Box,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { CardActionArea } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -40,9 +42,10 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 
 const MyCard = styled(Card)({
-  margin: "auto",
+  margin: "50px",
   // marginBottom: "30%",
   // maxWidth: 500,
   textAlign: "center",
@@ -50,12 +53,13 @@ const MyCard = styled(Card)({
   padding: "25px",
   maxHeight: "500px",
   overflowY: "auto",
+  width: "70vh",
 });
 
 const MyModal = styled(Modal)({
   display: "flex",
-  alignItems: "flexStart",
-  justifyContent: "flexStart",
+  alignItems: "flex-start",
+  justifyContent: "flex-end",
 });
 
 const Navbar = () => {
@@ -69,6 +73,8 @@ const Navbar = () => {
   const [getData, setGetData] = React.useState(null);
   const [getToken, setGetToken] = React.useState(null);
   const [getProfile, setGetProfile] = React.useState([]);
+  const [getProfileRead, setGetProfileRead] = React.useState([]);
+  const currentDate = new Date().toISOString().substring(0, 10);
 
   React.useEffect(() => {
     let token = getCookie("token");
@@ -98,14 +104,28 @@ const Navbar = () => {
             },
           }
         );
-        setGetProfile(response?.data?.data?.[0]?.hire_histories);
+        let allResponse = response?.data?.data?.[0]?.hire_histories;
+        let temp = [];
+        let tempRead = [];
+
+        for (let i = 0; i < allResponse.length; i++) {
+          if (allResponse[i].createdAt == allResponse[i].updatedAt) {
+            temp.push(allResponse[i]);
+          } else {
+            tempRead.push(allResponse[i]);
+          }
+        }
+
+        setGetProfile(temp);
+        setGetProfileRead(tempRead);
       } catch (error) {
         console.log("error UEF", error);
       }
     };
     getProfile();
   }, []);
-
+  console.log("getProfile=>", getProfile);
+  console.log("getProfileRead=>", getProfileRead);
   const profPict = getData?.photo_profile;
 
   const handleLogout = () => {
@@ -188,15 +208,28 @@ const Navbar = () => {
       );
       setGetSpecificHire(response?.data?.data?.[0]);
 
-      // const response2 = await axios.get(
-      //   `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${getCookie("token")}`,
-      //     },
-      //   }
-      // );
-      // setGetProfile(response2?.data?.data?.[0]?.hire_histories);
+      const response2 = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
+      let allResponse = response2?.data?.data?.[0]?.hire_histories;
+      let temp = [];
+      let tempRead = [];
+
+      for (let i = 0; i < allResponse.length; i++) {
+        if (allResponse[i].createdAt == allResponse[i].updatedAt) {
+          temp.push(allResponse[i]);
+        } else {
+          tempRead.push(allResponse[i]);
+        }
+      }
+
+      setGetProfile(temp);
+      setGetProfileRead(tempRead);
     } catch (error) {
       console.log("errorFetchHire=>", error);
     }
@@ -290,38 +323,218 @@ const Navbar = () => {
     </Menu>
   );
 
+  const [value, setValue] = React.useState(0);
+  const [selectNewMsg, setSelectNewMsg] = React.useState(false);
+  const [selectReadMsg, setSelectReadMsg] = React.useState(false);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const renderMessageMenu = (
     <MyModal open={messageEl} onClose={handleCloseMessage}>
       <MyCard>
         <CardContent>
-          <Typography variant="h4">Messages</Typography>
+          <Typography variant="h3">
+            <strong>MESSAGES</strong>
+          </Typography>
           <hr />
-          {getProfile?.reverse().map((item, key) => (
-            <React.Fragment key={key}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}>
-                <CardActionArea
+
+          <Box
+            sx={{
+              width: "100%",
+              bgcolor: "background.paper",
+              marginBottom: "20px",
+            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <Tabs value={value} onChange={handleChange} centered>
+                <Tab
+                  label={
+                    <span>
+                      NEW
+                      {getProfile?.length > 0 && (
+                        <IconButton
+                          fontSize="small"
+                          aria-label="show 4 new mails"
+                          color={selectNewMsg ? "primary" : "white"}
+                          onClick={handleOpenMessage}>
+                          <Badge
+                            badgeContent={getProfile?.length}
+                            color="error">
+                            <MailIcon />
+                          </Badge>
+                        </IconButton>
+                      )}
+                    </span>
+                  }
                   onClick={() => {
-                    handleFetchSpecific(item?.id);
-                    handleCloseMessage();
-                    handleOpenSpecificModal();
-                  }}>
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {item?.email}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item?.createdAt.split("T")[0]}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </div>
-            </React.Fragment>
-          ))}
+                    setSelectNewMsg(true);
+                    setSelectReadMsg(false);
+                  }}
+                />
+                <Tab
+                  label={
+                    <span>
+                      ALREADY READ
+                      {getProfile?.length > 0 && (
+                        <IconButton
+                          fontSize="small"
+                          aria-label="show 4 new mails"
+                          color={selectReadMsg ? "primary" : "white"}
+                          onClick={handleOpenMessage}>
+                          <Badge
+                            badgeContent={getProfileRead?.length}
+                            color="error">
+                            <MarkEmailReadIcon />
+                          </Badge>
+                        </IconButton>
+                      )}
+                    </span>
+                  }
+                  onClick={() => {
+                    setSelectReadMsg(true);
+                    setSelectNewMsg(false);
+                  }}
+                />
+              </Tabs>
+            </div>
+          </Box>
+
+          {selectNewMsg ? (
+            getProfile.length > 0 ? (
+              <>
+                {getProfile?.reverse().map((item, key) => (
+                  <React.Fragment key={key}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}>
+                      <CardActionArea
+                        sx={{
+                          backgroundColor: "#EEEDE7",
+                          borderRadius: "20px",
+                          marginBottom: "5px",
+                        }}
+                        onClick={() => {
+                          handleFetchSpecific(item?.id);
+                          handleCloseMessage();
+                          handleOpenSpecificModal();
+                        }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                          <span
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}>
+                            <Avatar
+                              sx={{
+                                bgcolor: deepPurple[500],
+                                marginRight: "10px",
+                              }}>
+                              {item?.fullname[0].toUpperCase()}
+                            </Avatar>
+                          </span>
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="div">
+                              {item?.email}
+                            </Typography>
+                            {currentDate == item?.createdAt.split("T")[0] ? (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary">
+                                Today
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary">
+                                {item?.createdAt.split("T")[0]}
+                              </Typography>
+                            )}
+                          </CardContent>
+                        </div>
+                      </CardActionArea>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </>
+            ) : (
+              <Typography variant="body1">No Message!</Typography>
+            )
+          ) : getProfileRead.length > 0 ? (
+            <>
+              {getProfileRead?.reverse().map((item, key) => (
+                <React.Fragment key={key}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}>
+                    <CardActionArea
+                      sx={{
+                        backgroundColor: "#EEEDE7",
+                        borderRadius: "20px",
+                        marginBottom: "5px",
+                      }}
+                      onClick={() => {
+                        handleFetchSpecific(item?.id);
+                        handleCloseMessage();
+                        handleOpenSpecificModal();
+                      }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        <span
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}>
+                          <Avatar
+                            sx={{
+                              bgcolor: deepPurple[500],
+                              marginRight: "10px",
+                            }}>
+                            {item?.fullname[0].toUpperCase()}
+                          </Avatar>
+                        </span>
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="div">
+                            {item?.email}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {item?.createdAt.split("T")[0]}
+                          </Typography>
+                        </CardContent>
+                      </div>
+                    </CardActionArea>
+                  </div>
+                </React.Fragment>
+              ))}
+            </>
+          ) : (
+            <Typography variant="body1">No Message!</Typography>
+          )}
         </CardContent>
         <style>
           {`
@@ -342,6 +555,10 @@ const Navbar = () => {
     <MyModal open={specificModal} onClose={handleCloseSpecificModal}>
       <MyCard>
         <CardContent>
+          <Typography variant="h3">
+            <strong>MESSAGES</strong>
+          </Typography>
+          <hr />
           <div
             style={{
               display: "flex",
@@ -350,36 +567,45 @@ const Navbar = () => {
               alignItems: "center",
               textAlign: "start",
             }}>
-            <Avatar sx={{ bgcolor: deepPurple[500], marginRight: "20px" }}>
-              {getSpecificHire?.fullname[0].toUpperCase()}
-            </Avatar>
-            <div
-              style={{
+            <CardActionArea
+              sx={{
+                backgroundColor: "#EEEDE7",
+                borderRadius: "20px",
+                marginBottom: "5px",
                 display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "column",
+                justifyContent: "center",
               }}>
-              <Typography variant="body1">
-                <strong>Name : </strong>
-                {getSpecificHire?.fullname}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Email : </strong>
-                {getSpecificHire?.email}
-              </Typography>
-              <Typography variant="body1">
-                <strong> Purpose : </strong>
-                {getSpecificHire?.purpose}
-              </Typography>
-              <Typography variant="body1">
-                <strong> Recieve Date : </strong>
-                {getSpecificHire?.createdAt.split("T")[0]}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Description : </strong>
-                {getSpecificHire?.description}
-              </Typography>
-            </div>
+              <Avatar sx={{ bgcolor: deepPurple[500], marginRight: "20px", marginLeft: "5px" }}>
+                {getSpecificHire?.fullname[0].toUpperCase()}
+              </Avatar>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  flexDirection: "column",
+                }}>
+                <Typography variant="body1">
+                  <strong>Name : </strong>
+                  {getSpecificHire?.fullname}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Email : </strong>
+                  {getSpecificHire?.email}
+                </Typography>
+                <Typography variant="body1">
+                  <strong> Purpose : </strong>
+                  {getSpecificHire?.purpose}
+                </Typography>
+                <Typography variant="body1">
+                  <strong> Recieve Date : </strong>
+                  {getSpecificHire?.createdAt.split("T")[0]}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Description : </strong>
+                  {getSpecificHire?.description}
+                </Typography>
+              </div>
+            </CardActionArea>
           </div>
         </CardContent>
         <style>
