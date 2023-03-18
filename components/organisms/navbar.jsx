@@ -145,7 +145,7 @@ const Navbar = () => {
   };
 
   const handleProfile = () => {
-    router.push(`/profile/${auth.profile.user_id}`);
+    router.push(`/profile`);
   };
 
   const handleHome = () => {
@@ -575,7 +575,12 @@ const Navbar = () => {
                 display: "flex",
                 justifyContent: "center",
               }}>
-              <Avatar sx={{ bgcolor: deepPurple[500], marginRight: "20px", marginLeft: "5px" }}>
+              <Avatar
+                sx={{
+                  bgcolor: deepPurple[500],
+                  marginRight: "20px",
+                  marginLeft: "5px",
+                }}>
                 {getSpecificHire?.fullname[0].toUpperCase()}
               </Avatar>
               <div

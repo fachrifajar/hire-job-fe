@@ -1471,8 +1471,6 @@ const Jobs = (props) => {
 };
 
 export const getServerSideProps = async (context) => {
-  const { slug } = context.query;
-
   const token = getCookie("token", context) || "";
   const profile = getCookie("profile", context) || "";
 

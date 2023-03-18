@@ -513,33 +513,34 @@
 }
 
 .footer {
-  // position: sticky;
+  position: absolute;
+  bottom: 10;
+  width: 100%;
   max-height: 30vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 40px 0;
-  padding-bottom: -20px; //cek
   background-color: #5e50a1;
   color: #fff;
   text-align: center;
+}
 
-  .logo {
-    width: 10%;
-    height: 20%;
-    margin-bottom: 20px;
-  }
+.footer .logo {
+  width: 10%;
+  height: 20%;
+  margin-bottom: 20px;
+}
 
-  .hr {
-    width: 100%;
-    border: 1px solid #fff;
-    margin: 20px 0;
-  }
+.footer .hr {
+  width: 100%;
+  border: 1px solid #fff;
+  margin: 20px 0;
+}
 
-  .info {
-    width: 100%;
-    p {
-      margin: 0;
-    }
+.footer .info {
+  width: 100%;
+  p {
+    margin: 0;
   }
 }
