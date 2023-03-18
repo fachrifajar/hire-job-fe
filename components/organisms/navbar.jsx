@@ -19,7 +19,11 @@ import {
   Modal,
   Card,
   CardContent,
+  CardMedia,
+  Stack,
 } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
+import { CardActionArea } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -37,45 +41,22 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 
-// const Search = styled("div")(({ theme }) => ({
-//   position: "relative",
-//   borderRadius: theme.shape.borderRadius,
-//   backgroundColor: alpha(theme.palette.common.white, 0.15),
-//   "&:hover": {
-//     backgroundColor: alpha(theme.palette.common.white, 0.25),
-//   },
-//   marginRight: theme.spacing(2),
-//   marginLeft: 0,
-//   width: "100%",
-//   [theme.breakpoints.up("sm")]: {
-//     marginLeft: theme.spacing(3),
-//     width: "auto",
-//   },
-// }));
+const MyCard = styled(Card)({
+  margin: "auto",
+  // marginBottom: "30%",
+  // maxWidth: 500,
+  textAlign: "center",
+  borderRadius: "20px",
+  padding: "25px",
+  maxHeight: "500px",
+  overflowY: "auto",
+});
 
-// const SearchIconWrapper = styled("div")(({ theme }) => ({
-//   padding: theme.spacing(0, 2),
-//   height: "100%",
-//   position: "absolute",
-//   pointerEvents: "none",
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "center",
-// }));
-
-// const StyledInputBase = styled(InputBase)(({ theme }) => ({
-//   color: "inherit",
-//   "& .MuiInputBase-input": {
-//     padding: theme.spacing(1, 1, 1, 0),
-//     // vertical padding + font size from searchIcon
-//     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-//     transition: theme.transitions.create("width"),
-//     width: "100%",
-//     [theme.breakpoints.up("md")]: {
-//       width: "20ch",
-//     },
-//   },
-// }));
+const MyModal = styled(Modal)({
+  display: "flex",
+  alignItems: "flexStart",
+  justifyContent: "flexStart",
+});
 
 const Navbar = () => {
   const router = useRouter();
@@ -87,7 +68,7 @@ const Navbar = () => {
   const [isAuth, setIsAuth] = React.useState(false);
   const [getData, setGetData] = React.useState(null);
   const [getToken, setGetToken] = React.useState(null);
-  const [getProfile, setGetPofile] = React.useState([]);
+  const [getProfile, setGetProfile] = React.useState([]);
 
   React.useEffect(() => {
     let token = getCookie("token");
@@ -117,7 +98,7 @@ const Navbar = () => {
             },
           }
         );
-        setGetPofile(response?.data?.data?.[0]);
+        setGetProfile(response?.data?.data?.[0]?.hire_histories);
       } catch (error) {
         console.log("error UEF", error);
       }
@@ -265,6 +246,161 @@ const Navbar = () => {
     </Menu>
   );
 
+  const [messageEl, setMessageEl] = React.useState(null);
+  const [getSpecificHire, setGetSpecificHire] = React.useState(null);
+  const [specificModal, setSpecificModal] = React.useState(false);
+
+  const handleCloseMessage = () => {
+    setMessageEl(false);
+  };
+
+  const handleOpenMessage = () => {
+    setMessageEl(true);
+  };
+
+  const handleCloseSpecificModal = () => {
+    setSpecificModal(false);
+  };
+
+  const handleOpenSpecificModal = async () => {
+    setSpecificModal(true);
+  };
+
+  const handleFetchSpecific = async (id) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/user/invitation/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
+          },
+        }
+      );
+      setGetSpecificHire(response?.data?.data?.[0]);
+      // console.log("response=>", response?.data?.data?.[0]);
+
+      // const response2 = await axios.get(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${getCookie("token")}`,
+      //     },
+      //   }
+      // );
+      // setGetProfile(response2?.data?.data?.[0]?.hire_histories);
+    } catch (error) {
+      console.log("errorFetchHire=>", error);
+    }
+  };
+
+  // console.log("getProfile=>", getProfile);
+  const renderMessageMenu = (
+    <MyModal open={messageEl} onClose={handleCloseMessage}>
+      <MyCard>
+        <CardContent>
+          <Typography variant="h4">Messages</Typography>
+          <hr />
+          {getProfile?.reverse().map((item, key) => (
+            <React.Fragment key={key}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}>
+                <CardActionArea
+                  onClick={() => {
+                    handleFetchSpecific(item?.id);
+                    handleCloseMessage();
+                    handleOpenSpecificModal();
+                  }}>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {item?.email}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {item?.createdAt.split("T")[0]}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </div>
+            </React.Fragment>
+          ))}
+        </CardContent>
+        <style>
+          {`
+    ::-webkit-scrollbar {
+      width: 0.1em;
+      height: 0.5em;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  `}
+        </style>
+      </MyCard>
+    </MyModal>
+  );
+
+  const renderSpecificMessage = (
+    <MyModal open={specificModal} onClose={handleCloseSpecificModal}>
+      <MyCard>
+        <CardContent>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "start",
+            }}>
+            <Avatar sx={{ bgcolor: deepPurple[500], marginRight: "20px" }}>
+              {getSpecificHire?.fullname[0].toUpperCase()}
+            </Avatar>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                flexDirection: "column",
+              }}>
+              <Typography variant="body1">
+                <strong>Name : </strong>
+                {getSpecificHire?.fullname}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Email : </strong>
+                {getSpecificHire?.email}
+              </Typography>
+              <Typography variant="body1">
+                <strong> Purpose : </strong>
+                {getSpecificHire?.purpose}
+              </Typography>
+              <Typography variant="body1">
+                <strong> Recieve Date : </strong>
+                {getSpecificHire?.createdAt.split("T")[0]}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Description : </strong>
+                {getSpecificHire?.description}
+              </Typography>
+            </div>
+          </div>
+        </CardContent>
+        <style>
+          {`
+::-webkit-scrollbar {
+  width: 0.1em;
+  height: 0.5em;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+`}
+        </style>
+      </MyCard>
+    </MyModal>
+  );
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -321,10 +457,9 @@ const Navbar = () => {
                 <IconButton
                   size="large"
                   aria-label="show 4 new mails"
-                  color="inherit">
-                  <Badge
-                    badgeContent={getProfile?.hire_histories?.length}
-                    color="error">
+                  color="inherit"
+                  onClick={handleOpenMessage}>
+                  <Badge badgeContent={getProfile?.length} color="error">
                     <MailIcon />
                   </Badge>
                 </IconButton>
@@ -332,7 +467,7 @@ const Navbar = () => {
                   size="large"
                   aria-label="show 17 new notifications"
                   color="inherit">
-                  <Badge badgeContent={17} color="error">
+                  <Badge badgeContent={getProfile?.hire_histories?.length} color="error">
                     <NotificationsIcon />
                   </Badge>
                 </IconButton> */}
@@ -384,6 +519,8 @@ const Navbar = () => {
         </AppBar>
         {renderMobileMenu}
         {renderMenu}
+        {renderMessageMenu}
+        {renderSpecificMessage}
       </Box>
     </>
   );
