@@ -176,6 +176,9 @@ const Jobs = (props) => {
     if (props.token && props.profile) {
       const convertData = JSON.parse(props.profile);
 
+      // if (convertData?.recruiter_id != 0) {
+      //   router.push("/jobs");
+      // }
       setGetToken(token);
       setIsAuth(true);
     }

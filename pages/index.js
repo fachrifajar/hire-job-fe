@@ -3,7 +3,7 @@ import React from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
-import style from "@/styles/jobs/index.module.scss";
+import style from "../styles/jobs/index.module.scss";
 import { getCookies, getCookie, setCookie, deleteCookie } from "cookies-next";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
@@ -12,6 +12,10 @@ import Spinner from "@/components/atoms/spinner";
 import { useSelector, useDispatch } from "react-redux";
 
 import * as user from "@/store/reducer/user";
+
+//MUI
+import { Avatar } from "@mui/material";
+import { deepPurple, deepOrange } from "@mui/material/colors";
 
 const Jobs = (props) => {
   const router = useRouter();
@@ -25,7 +29,7 @@ const Jobs = (props) => {
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/detail/${id}`)
       .then(({ data }) => {
-        console.log("response", data);
+        // console.log("response", data);
         dispatch(
           user.setData({
             data: data?.data[0],
@@ -46,8 +50,6 @@ const Jobs = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [disablePagination, setDisablePagination] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  // console.log("isAuth>>",isAuth)
 
   const fetchBySort = (pageParam, sortValue, orderValue) => {
     const offset = (pageParam - 1) * 10 + 1;
@@ -143,7 +145,7 @@ const Jobs = (props) => {
       return letter.toUpperCase();
     });
   };
-
+  console.log("getJobList=>", getJobList);
   return (
     <>
       <Head>
@@ -273,10 +275,25 @@ const Jobs = (props) => {
                     <React.Fragment key={key}>
                       <div className={style["card-body"]}>
                         <div className={` ${style["image-content"]}`}>
-                          <img
+                          {/* <img
                             src={job["user.photo_profile"]}
                             alt="user photo"
-                          />
+                          /> */}
+                          <Avatar
+                            sx={{
+                              // bgcolor: deepOrange[500],
+                              margin: "20px",
+                              height: 65,
+                              width: 65,
+                            }}>
+                            {job["user.fullname"] &&
+                              job["user.fullname"]
+                                .split(" ")
+                                .map((name, index) =>
+                                  index < 2 ? name[0].toUpperCase() : null
+                                )
+                                .join("")}
+                          </Avatar>
                         </div>
                         <div className={style["text-content"]}>
                           <h2>{capitalize(job["user.fullname"])}</h2>

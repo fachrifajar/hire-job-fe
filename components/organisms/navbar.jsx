@@ -25,7 +25,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import { deepPurple } from "@mui/material/colors";
+import { deepPurple, deepOrange } from "@mui/material/colors";
 import { CardActionArea } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -75,7 +75,7 @@ const Navbar = () => {
   const [getProfile, setGetProfile] = React.useState([]);
   const [getProfileRead, setGetProfileRead] = React.useState([]);
   const currentDate = new Date().toISOString().substring(0, 10);
-
+  // console.log(getData);
   React.useEffect(() => {
     let token = getCookie("token");
     let profile = getCookie("profile");
@@ -83,9 +83,12 @@ const Navbar = () => {
     if (token && profile) {
       const convertData = JSON.parse(profile);
 
-      setGetData(convertData);
       setGetToken(token);
       setIsAuth(true);
+
+      if (convertData?.recruiter_id != 0 && router.pathname == "/profile") {
+        router.push("/jobs");
+      }
     } else {
       if (router.pathname !== "/" && router.pathname !== "/jobs") {
         router.push("/auth/login");
@@ -104,6 +107,8 @@ const Navbar = () => {
             },
           }
         );
+        // console.log("response=>",response)
+        setGetData(response?.data?.data?.[0]?.user);
         let allResponse = response?.data?.data?.[0]?.hire_histories;
         let temp = [];
         let tempRead = [];
@@ -124,8 +129,8 @@ const Navbar = () => {
     };
     getProfile();
   }, []);
-  console.log("getProfile=>", getProfile);
-  console.log("getProfileRead=>", getProfileRead);
+  // console.log("getProfile=>", getProfile);
+  // console.log("getProfileRead=>", getProfileRead);
   const profPict = getData?.photo_profile;
 
   const handleLogout = () => {
@@ -251,8 +256,14 @@ const Navbar = () => {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}>
-      <MenuItem onClick={handleProfile}>Profile</MenuItem>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      {getData?.recruiter_id == 0 ? (
+        <>
+          <MenuItem onClick={handleProfile}>Profile</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </>
+      ) : (
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      )}
     </Menu>
   );
 
@@ -628,6 +639,8 @@ const Navbar = () => {
     </MyModal>
   );
 
+  // console.log("getData=>", getData?.recruiter_id);
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -706,11 +719,27 @@ const Navbar = () => {
                   aria-haspopup="true"
                   onClick={handleProfileMenuOpen}
                   color="inherit">
-                  <Avatar
+                  {/* <Avatar
                     alt="user pict"
                     src={profPict}
                     sx={{ width: 44, height: 44 }}
-                  />
+                  /> */}
+
+                  <Avatar
+                    sx={{
+                      bgcolor: deepPurple[500],
+                      // marginRight: "10px",
+                      width: 35,
+                      height: 35,
+                    }}>
+                    {getData?.fullname &&
+                      getData.fullname
+                        .split(" ")
+                        .map((name, index) =>
+                          index < 2 ? name[0].toUpperCase() : null
+                        )
+                        .join("")}
+                  </Avatar>
                 </IconButton>
               </Box>
             ) : (

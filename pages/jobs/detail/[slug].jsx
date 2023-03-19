@@ -17,6 +17,10 @@ import * as user from "@/store/reducer/user";
 
 import { useSelector, useDispatch } from "react-redux";
 
+//MUI
+import { Avatar } from "@mui/material";
+import { deepPurple, deepOrange } from "@mui/material/colors";
+
 const Jobs = (props) => {
   const router = useRouter();
 
@@ -61,6 +65,23 @@ const Jobs = (props) => {
                 src={user?.user?.data?.data?.user?.photo_profile}
                 alt="user pp"
               />
+              {/* <Avatar
+                className={`${style["img"]}`}
+                sx={{
+                  bgcolor: deepPurple[500],
+                  // margin: "20px",
+                  height: 105,
+                  width: 105,
+                  fontSize: "34px",
+                }}>
+                {user?.user?.data?.data?.user?.fullname &&
+                  user?.user?.data?.data?.user?.fullname
+                    .split(" ")
+                    .map((name, index) =>
+                      index < 2 ? name[0].toUpperCase() : null
+                    )
+                    .join("")}
+              </Avatar> */}
               <div className={style["text-content"]}>
                 <h2>{nameFilter(user?.user?.data?.data?.user?.fullname)}</h2>
                 <p>{user?.user?.data?.data?.job}</p>
