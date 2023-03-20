@@ -290,7 +290,7 @@ const Jobs = (props) => {
                               job["user.fullname"]
                                 .split(" ")
                                 .map((name, index) =>
-                                  index < 2 ? name[0].toUpperCase() : null
+                                  index < 2 ? name[0]?.toUpperCase() : null
                                 )
                                 .join("")}
                           </Avatar>
